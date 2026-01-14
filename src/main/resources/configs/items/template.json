@@ -1,0 +1,67 @@
+[
+  {
+    "item_id": "stone",
+    "name": "Stone",
+    "type": "RESOURCE",
+    "weight": 2.5,
+    "value": 1,
+    "max_stack_size": 64,
+    "properties": {
+      "hardness": 0.7,
+      "material": "stone",
+      "durability": 1.0
+    }
+  },
+  {
+    "item_id": "wood_log",
+    "name": "Wood Log",
+    "type": "RESOURCE",
+    "weight": 5.0,
+    "value": 3,
+    "max_stack_size": 32,
+    "properties": {
+      "wood_type": "oak",
+      "flammable": true,
+      "durability": 0.8
+    }
+  },
+  {
+    "item_id": "apple",
+    "name": "Apple",
+    "type": "FOOD",
+    "weight": 0.3,
+    "value": 2,
+    "max_stack_size": 16,
+    "properties": {
+      "nutrition": 20,
+      "hydration": 5,
+      "spoil_time": 24
+    }
+  },
+  {
+    "item_id": "torch",
+    "name": "Torch",
+    "type": "TOOL",
+    "weight": 1.0,
+    "value": 5,
+    "max_stack_size": 8,
+    "properties": {
+      "tool_type": "light_source",
+      "durability": 100,
+      "light_radius": 10,
+      "burn_time": 3600
+    }
+  },
+  {
+    "item_id": "health_potion",
+    "name": "Health Potion",
+    "type": "CONSUMABLE",
+    "weight": 0.5,
+    "value": 20,
+    "max_stack_size": 4,
+    "properties": {
+      "effect": "heal",
+      "power": 50
+    }
+  }
+]

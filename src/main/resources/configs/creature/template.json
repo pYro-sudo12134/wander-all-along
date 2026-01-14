@@ -1,0 +1,46 @@
+[
+  {
+    "creature_type": "PLAYER",
+    "max_health": 100.0,
+    "health_regen": 1.0,
+    "inventory_slots": 30,
+    "max_carry_weight": 50.0,
+    "weight": 60.0,
+    "base_speed": 5.0,
+    "base_damage": 10.0,
+    "default_skills": ["foraging", "cooking", "healing", "carpentry"]
+  },
+  {
+    "creature_type": "OTHER",
+    "max_health": 50.0,
+    "health_regen": 0.5,
+    "inventory_slots": 10,
+    "max_carry_weight": 20.0,
+    "weight": 40.0,
+    "base_speed": 4.0,
+    "base_damage": 5.0,
+    "default_skills": []
+  },
+  {
+    "creature_type": "WOLF",
+    "max_health": 80.0,
+    "health_regen": 2.0,
+    "inventory_slots": 0,
+    "max_carry_weight": 0.0,
+    "weight": 50.0,
+    "base_speed": 7.0,
+    "base_damage": 15.0,
+    "default_skills": []
+  },
+  {
+    "creature_type": "BEAR",
+    "max_health": 200.0,
+    "health_regen": 1.0,
+    "inventory_slots": 0,
+    "max_carry_weight": 0.0,
+    "weight": 300.0,
+    "base_speed": 4.0,
+    "base_damage": 30.0,
+    "default_skills": []
+  }
+]

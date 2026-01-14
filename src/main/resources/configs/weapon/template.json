@@ -1,0 +1,41 @@
+[
+  {
+    "id": "wooden_sword",
+    "name": "Wooden Sword",
+    "weapon_type": "SWORD",
+    "damage_type": "SLASHING",
+    "material": "wood",
+    "base_damage": 5.0,
+    "attack_speed": 1.2,
+    "range": 1.5,
+    "weight": 2.0,
+    "durability": 50.0,
+    "value": 20
+  },
+  {
+    "id": "iron_sword",
+    "name": "Iron Sword",
+    "weapon_type": "SWORD",
+    "damage_type": "SLASHING",
+    "material": "iron",
+    "base_damage": 15.0,
+    "attack_speed": 1.0,
+    "range": 1.5,
+    "weight": 3.0,
+    "durability": 200.0,
+    "value": 100
+  },
+  {
+    "id": "iron_axe",
+    "name": "Iron Axe",
+    "weapon_type": "AXE",
+    "damage_type": "SLASHING",
+    "material": "iron",
+    "base_damage": 12.0,
+    "attack_speed": 0.8,
+    "range": 1.2,
+    "weight": 4.0,
+    "durability": 150.0,
+    "value": 80
+  }
+]

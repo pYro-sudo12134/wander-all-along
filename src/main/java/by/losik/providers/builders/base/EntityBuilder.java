@@ -1,11 +1,16 @@
 package by.losik.providers.builders.base;
 
+import by.losik.components.core.Bounds;
+import by.losik.components.core.ID;
+import by.losik.components.core.Inventory;
+import by.losik.components.core.Position;
 import by.losik.components.items.MaterialInfo;
 import by.losik.components.survival.Health;
 import by.losik.components.ui.Description;
+import by.losik.components.ui.Texture;
+import by.losik.providers.builders.flyweight.TextureFlyweight;
 import com.artemis.World;
 import com.artemis.Component;
-import by.losik.components.core.*;
 
 import java.util.function.Consumer;
 
@@ -55,6 +60,12 @@ public abstract class EntityBuilder {
 
     public EntityBuilder withInventory(int maxSlots) {
         world.edit(entityId).add(new Inventory(maxSlots));
+        return this;
+    }
+
+    public EntityBuilder withTexture(String texturePath) {
+        Texture texture = TextureFlyweight.getInstance().getTexture(texturePath);
+        world.edit(entityId).add(texture);
         return this;
     }
 

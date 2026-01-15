@@ -37,23 +37,12 @@ public class PickaxeBuilder extends ToolBuilder {
         });
     }
 
-    public PickaxeBuilder forMiningOre() {
-        Set<Class<? extends Component>> canHarvest = new HashSet<>();
-        canHarvest.add(Building.class);
-
+    public PickaxeBuilder forMining(Set<Class<? extends Component>> canHarvest, float efficiency, float durabilityLossPerUse) {
         ToolStats stats = getComponent(ToolStats.class);
         if (stats != null) {
-            stats.efficiency = 2.0f;
+            stats.durabilityLossPerUse = durabilityLossPerUse;
+            stats.efficiency = efficiency;
             stats.canHarvest = canHarvest;
-        }
-        return this;
-    }
-
-    public PickaxeBuilder forMiningStone() {
-        ToolStats stats = getComponent(ToolStats.class);
-        if (stats != null) {
-            stats.efficiency = 1.8f;
-            stats.durabilityLossPerUse = 0.015f;
         }
         return this;
     }

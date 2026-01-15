@@ -1,5 +1,6 @@
 package by.losik.core;
 
+import by.losik.providers.builders.flyweight.TextureFlyweight;
 import by.losik.providers.config.ArmorConfig;
 import by.losik.providers.config.ConfigManager;
 import by.losik.providers.config.CreatureConfig;
@@ -36,7 +37,7 @@ public class CompositionRoot extends AbstractModule {
         bind(WeaponConfig.class).in(Singleton.class);
         bind(ItemConfig.class).in(Singleton.class);
         bind(ConfigManager.class).in(Singleton.class);
-
+        bind(TextureFlyweight.class).in(Singleton.class);
     }
 
     @Provides

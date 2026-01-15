@@ -1,10 +1,10 @@
-package by.losik.providers.builders.flyweight;
+package by.losik.providers.flyweight;
 
 import by.losik.components.ui.Texture;
 import com.google.inject.Singleton;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
 public class TextureFlyweight {
@@ -13,7 +13,7 @@ public class TextureFlyweight {
     private final Map<String, Texture> textureCache;
 
     private TextureFlyweight() {
-        textureCache = new HashMap<>();
+        textureCache = new ConcurrentHashMap<>();
     }
 
     public static TextureFlyweight getInstance() {

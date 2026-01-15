@@ -86,7 +86,6 @@ public class ArmorBuilder extends BaseItemBuilder {
         Map<ID, Float> resistanceBonusMap = new HashMap<>();
         if (resistanceBonuses != null) {
             for (Map.Entry<String, Float> entry : resistanceBonuses.entrySet()) {
-                // Предполагаем, что ключ - это id типа урона
                 ID damageTypeId = ID.of(entry.getKey(), entry.getKey());
                 resistanceBonusMap.put(damageTypeId, entry.getValue());
             }

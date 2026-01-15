@@ -8,7 +8,7 @@ import by.losik.components.items.MaterialInfo;
 import by.losik.components.survival.Health;
 import by.losik.components.ui.Description;
 import by.losik.components.ui.Texture;
-import by.losik.providers.builders.flyweight.TextureFlyweight;
+import by.losik.providers.flyweight.TextureFlyweight;
 import com.artemis.World;
 import com.artemis.Component;
 

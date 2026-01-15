@@ -1,6 +1,6 @@
 package by.losik.core;
 
-import by.losik.providers.builders.flyweight.TextureFlyweight;
+import by.losik.providers.flyweight.TextureFlyweight;
 import by.losik.providers.config.ArmorConfig;
 import by.losik.providers.config.ConfigManager;
 import by.losik.providers.config.CreatureConfig;

@@ -10,31 +10,22 @@ ext {
     gdxVersion = '1.12.1'
     artemisVersion = '2.3.0'
     jomlVersion = '1.10.7'
-    lwjglVersion = '3.3.3'
 }
 
 repositories {
     mavenCentral()
-    google()
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     maven { url "https://jitpack.io" }
-}
-
-configurations {
-    natives
 }
 
 dependencies {
     implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-
-    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
 
     implementation 'com.google.inject:guice:7.0.0'
     implementation 'com.google.inject.extensions:guice-assistedinject:7.0.0'
 
-    implementation 'net.onedaybeard.artemis:artemis-odb:$artemisVersion'
-    implementation 'net.onedaybeard.artemis:artemis-fluid-core:$artemisVersion'
     implementation "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
     implementation "net.onedaybeard.artemis:artemis-fluid-core:$artemisVersion"
 
@@ -57,104 +48,65 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.24.2'
     testImplementation 'org.awaitility:awaitility:4.2.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
-
-    // implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-    // implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-    // implementation "com.badlogicgames.gdx:gdx-ai:1.8.2"
-    // implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-    // implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-}
-
-task copyNatives {
-    doLast {
-        copy {
-            from configurations.natives
-            into "$buildDir/natives"
-        }
-    }
-}
-
-classes.dependsOn copyNatives
-
-run {
-    dependsOn copyNatives
-    systemProperty "java.library.path", "$buildDir/natives"
-
-    jvmArgs = [
-        '-Xmx3g',
-        '-Xms1g',
-        '-XX:+UseG1GC',
-        '-XX:+UnlockExperimentalVMOptions',
-        '-XX:G1NewSizePercent=20',
-        '-XX:G1ReservePercent=20',
-        '-XX:MaxGCPauseMillis=50',
-        '-XX:G1HeapRegionSize=32M',
-        '-Dfile.encoding=UTF-8'
-    ]
-
-    systemProperty "artemis.debug", "true"
-    systemProperty "artemis.profiler", "true"
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
-    withSourcesJar()
-    withJavadocJar()
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
-    options.incremental = true
     options.compilerArgs += [
-        '-parameters',
-        '-Xlint:unchecked',
-        '-Xlint:deprecation',
-        '-Xdiags:verbose'
+            '-parameters',
+            '-Xlint:unchecked',
+            '-Xlint:deprecation'
     ]
+}
 
-    options.fork = true
-    options.forkOptions.jvmArgs += ['-Xmx2g']
+run {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+
+    jvmArgs = [
+            '-Xmx3g',
+            '-Xms1g',
+            '-XX:+UseG1GC',
+            '-XX:+UnlockExperimentalVMOptions',
+            '-XX:G1NewSizePercent=20',
+            '-XX:G1ReservePercent=20',
+            '-XX:MaxGCPauseMillis=50',
+            '-XX:G1HeapRegionSize=32M',
+            '-Dfile.encoding=UTF-8',
+            '-Dartemis.debug=true',
+            '-Dartemis.profiler=true'
+    ]
 }
 
 test {
     useJUnitPlatform()
     maxHeapSize = "4g"
     jvmArgs = [
-        '-Xmx4g',
-        '-Dfile.encoding=UTF-8',
-        '-Djava.awt.headless=true',
-        '-Dartemis.skiplogic=true'
+            '-Xmx4g',
+            '-Dfile.encoding=UTF-8',
+            '-Djava.awt.headless=true'
     ]
-
     testLogging {
         events "passed", "skipped", "failed"
         exceptionFormat "full"
-        showStandardStreams = true
     }
-
-    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
 }
 
 application {
     mainClass = 'by.losik.desktop.DesktopLauncher'
 }
 
-task generateArtemisFluid(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    //mainClass = 'by.losik.tools.ArtemisFluidGenerator'
-    args = ['src/main/java', 'by.losik.components']
-}
-
-task checkArchitecture {
+task cleanAll {
+    dependsOn clean
     doLast {
-        println "Components: ${file('src/main/java/by/losik/components').listFiles().count { it.isDirectory() }} packages"
-        println "Systems: TODO - create systems package"
-        println "Worlds: TODO - create world initializer"
+        delete 'build'
+        delete '.gradle'
     }
-}
-
-clean {
-    delete += file("$buildDir/natives")
 }

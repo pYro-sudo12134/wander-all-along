@@ -7,7 +7,9 @@ import by.losik.components.core.Position;
 import by.losik.components.items.MaterialInfo;
 import by.losik.components.survival.Health;
 import by.losik.components.ui.Description;
+import by.losik.components.ui.Sprite;
 import by.losik.components.ui.Texture;
+import by.losik.providers.flyweight.SpriteFlyweight;
 import by.losik.providers.flyweight.TextureFlyweight;
 import com.artemis.World;
 import com.artemis.Component;
@@ -64,8 +66,36 @@ public abstract class EntityBuilder {
     }
 
     public EntityBuilder withTexture(String texturePath) {
-        Texture texture = TextureFlyweight.getInstance().getTexture(texturePath);
+        Texture texture = TextureFlyweight
+                .getInstance()
+                .getTextureComponent(texturePath);
         world.edit(entityId).add(texture);
+        return this;
+    }
+
+    public EntityBuilder withSprite(String texturePath, int layer,
+                                    float scale, float offsetX, float offsetY) {
+        Sprite sprite = SpriteFlyweight
+                .getInstance()
+                .createSpriteForEntity(texturePath, layer,
+                        scale, offsetX, offsetY);
+        world.edit(entityId).add(sprite);
+        return this;
+    }
+
+    public EntityBuilder withSpriteRegion(String texturePath, int layer,
+                                          int regionX, int regionY,
+                                          int regionWidth, int regionHeight,
+                                          float scale, float offsetX, float offsetY) {
+        Sprite sprite = SpriteFlyweight
+                .getInstance()
+                .createSprite(texturePath, layer,
+                        regionX, regionY,
+                        regionWidth, regionHeight);
+        sprite.scale = scale;
+        sprite.offsetX = offsetX;
+        sprite.offsetY = offsetY;
+        world.edit(entityId).add(sprite);
         return this;
     }
 

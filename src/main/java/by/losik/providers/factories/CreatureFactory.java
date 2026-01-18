@@ -6,8 +6,11 @@ import by.losik.components.core.Bounds;
 import by.losik.components.core.CarryingCapacity;
 import by.losik.components.core.Creature;
 import by.losik.components.core.CreatureType;
+import by.losik.components.core.Gravity;
 import by.losik.components.core.ID;
 import by.losik.components.core.Inventory;
+import by.losik.components.core.Jump;
+import by.losik.components.core.Model3D; // ИМПОРТ
 import by.losik.components.core.Position;
 import by.losik.components.core.State;
 import by.losik.components.core.Velocity;
@@ -48,6 +51,8 @@ public class CreatureFactory extends EntityFactory {
                 .add(new Velocity())
                 .add(new Bounds(0.9f, 1.7f))
                 .add(new State())
+                .add(new Gravity())
+                .add(new Jump())
                 .add(new Tag(creatureType.getCreatureType()))
                 .add(new Description("A " + creatureType.getCreatureType() + " named " + name));
 
@@ -72,6 +77,16 @@ public class CreatureFactory extends EntityFactory {
                 .add(new BodyStatus())
                 .add(new MentalState())
                 .add(new Rest());
+
+        addModelComponent(entity, stats);
+    }
+
+    private void addModelComponent(int entity, CreatureConfig.CreatureStats stats) {
+        Model3D model3D = new Model3D();
+        model3D.modelPath = stats.modelPath;
+        model3D.scale = stats.modelScale;
+
+        world.edit(entity).add(model3D);
     }
 
     private String generateCreatureId(String name, CreatureType creatureType) {

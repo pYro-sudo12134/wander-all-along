@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +21,6 @@ public class MainGameScreen implements Screen {
     private Skin skin;
     private Table rootTable;
     private Label fpsLabel;
-    private Label entityCountLabel;
-    private Label playerPositionLabel;
     private float uiUpdateTimer = 0;
     private static final float UI_UPDATE_INTERVAL = 0.1f;
 
@@ -43,13 +40,9 @@ public class MainGameScreen implements Screen {
 
         rootTable.top().left().pad(10);
         fpsLabel = new Label("FPS: --", skin);
-        entityCountLabel = new Label("Entities: --", skin);
-        playerPositionLabel = new Label("Player: (--, --)", skin);
 
         Table infoTable = new Table();
         infoTable.add(fpsLabel).left().padBottom(5).row();
-        infoTable.add(entityCountLabel).left().padBottom(5).row();
-        infoTable.add(playerPositionLabel).left().padBottom(5).row();
 
         rootTable.add(infoTable).expand().top().left();
         rootTable.row();
@@ -96,13 +89,6 @@ public class MainGameScreen implements Screen {
             int fps = Gdx.graphics.getFramesPerSecond();
             fpsLabel.setText(String.format("FPS: %d", fps));
 
-            if (gameBootstrap.getWorld() != null) {
-                int entityCount = 0;
-                entityCountLabel.setText(String.format("Entities: %d", entityCount));
-            }
-
-            // TODO: Update player position
-
             uiUpdateTimer = 0;
         }
     }
@@ -148,13 +134,5 @@ public class MainGameScreen implements Screen {
         }
 
         logger.info("Game screen disposed");
-    }
-
-    public Stage getStage() {
-        return stage;
-    }
-
-    public Skin getSkin() {
-        return skin;
     }
 }

@@ -1,6 +1,7 @@
 package by.losik.core;
 
 import by.losik.providers.factories.*;
+import by.losik.providers.flyweight.ModelFlyweight;
 import by.losik.providers.flyweight.SpriteFlyweight;
 import by.losik.providers.flyweight.TextureFlyweight;
 import by.losik.providers.config.*;
@@ -29,6 +30,7 @@ public class CompositionRoot extends AbstractModule {
         bind(PlayerInputSystem.class).in(Singleton.class);
         bind(BoundsSystem.class).in(Singleton.class);
         bind(CameraSystem.class).in(Singleton.class);
+        bind(IsometricModelRenderSystem.class).in(Singleton.class);
         bind(ArmorFactory.class).in(Singleton.class);
         bind(ConsumableItemFactory.class).in(Singleton.class);
         bind(ContainerItemFactory.class).in(Singleton.class);
@@ -44,6 +46,10 @@ public class CompositionRoot extends AbstractModule {
         bind(TreeFactory.class).in(Singleton.class);
         bind(DiseaseFactory.class).in(Singleton.class);
         bind(GameBootstrap.class).in(Singleton.class);
+        bind(ModelFlyweight.class).in(Singleton.class);
+        bind(GroundSystem.class).in(Singleton.class);
+        bind(FollowTargetSystem.class).in(Singleton.class);
+        bind(GravitySystem.class).in(Singleton.class);
     }
 
     @Provides
@@ -52,15 +58,22 @@ public class CompositionRoot extends AbstractModule {
             MovementSystem movementSystem,
             PlayerInputSystem playerInputSystem,
             BoundsSystem boundsSystem,
-            CameraSystem cameraSystem) {
+            CameraSystem cameraSystem,
+            IsometricModelRenderSystem isometricRenderSystem,
+            GroundSystem groundSystem,
+            FollowTargetSystem followTargetSystem,
+            GravitySystem gravitySystem) {
 
         WorldConfigurationBuilder config = new WorldConfigurationBuilder();
-        config.with(movementSystem)
-                .with(playerInputSystem)
+        config.with(playerInputSystem)
+                .with(movementSystem)
+                .with(followTargetSystem)
                 .with(boundsSystem)
-                .with(cameraSystem);
+                .with(cameraSystem)
+                .with(isometricRenderSystem)
+                .with(groundSystem)
+                .with(gravitySystem);
 
-        // Можно добавить другие системы позже
         // .with(new CombatSystem())
         // .with(new HealthSystem())
         // .with(new NeedsSystem())

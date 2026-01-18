@@ -6,26 +6,16 @@ import by.losik.components.core.Position;
 import by.losik.providers.factories.CreatureFactory;
 import by.losik.systems.BoundsSystem;
 import by.losik.systems.CameraSystem;
+import by.losik.systems.IsometricModelRenderSystem;
 import by.losik.systems.MovementSystem;
 import by.losik.systems.PlayerInputSystem;
 import by.losik.ui.MainGameScreen;
 import com.artemis.World;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Singleton
 public class GameBootstrap {
@@ -33,21 +23,15 @@ public class GameBootstrap {
 
     private final World world;
     private final CreatureFactory creatureFactory;
-    private SpriteBatch spriteBatch;
-    private OrthographicCamera gameCamera;
-    private OrthographicCamera uiCamera;
-    private Viewport gameViewport;
-    private Viewport uiViewport;
     private MainGameScreen mainGameScreen;
     private MovementSystem movementSystem;
     private PlayerInputSystem playerInputSystem;
     private BoundsSystem boundsSystem;
     private CameraSystem cameraSystem;
+    private IsometricModelRenderSystem renderSystem;
     private boolean initialized = false;
     private boolean paused = false;
     private int playerEntityId = -1;
-    private Texture whitePixel;
-    private TextureRegion whiteRegion;
 
     @Inject
     public GameBootstrap(World world, CreatureFactory creatureFactory) {
@@ -62,44 +46,19 @@ public class GameBootstrap {
         }
 
         logger.info("Initializing game...");
-        initializeGraphics();
-        setupWorld();
-        createInitialEntities();
-        setupSystems();
-        mainGameScreen = new MainGameScreen(this);
 
+        setupWorld();
+        setupSystems();
+        createInitialEntities();
+
+        mainGameScreen = new MainGameScreen(this);
         initialized = true;
         logger.info("Game initialized successfully!");
     }
 
-    private void initializeGraphics() {
-        logger.info("Initializing graphics...");
-        spriteBatch = new SpriteBatch();
-        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.WHITE);
-        pixmap.fill();
-        whitePixel = new Texture(pixmap);
-        whiteRegion = new TextureRegion(whitePixel);
-        pixmap.dispose();
-
-        gameCamera = new OrthographicCamera();
-        gameViewport = new FitViewport(1920, 1080, gameCamera);
-        gameViewport.apply();
-
-        uiCamera = new OrthographicCamera();
-        uiViewport = new FitViewport(1920, 1080, uiCamera);
-        uiViewport.apply();
-
-        logger.info("Graphics initialized: {}x{}",
-                (int)gameViewport.getWorldWidth(),
-                (int)gameViewport.getWorldHeight());
-    }
-
     private void setupWorld() {
         logger.info("Setting up Artemis world...");
-
         injectSystems();
-
         logger.info("World setup complete with {} systems",
                 world.getSystems().size());
     }
@@ -109,13 +68,14 @@ public class GameBootstrap {
         playerInputSystem = world.getSystem(PlayerInputSystem.class);
         boundsSystem = world.getSystem(BoundsSystem.class);
         cameraSystem = world.getSystem(CameraSystem.class);
+        renderSystem = world.getSystem(IsometricModelRenderSystem.class);
 
         if (playerInputSystem != null) {
             playerInputSystem.setMovementSpeed(5.0f);
         }
 
         if (boundsSystem != null) {
-            boundsSystem.setWorldBounds(-100, 100, -100, 100);
+            boundsSystem.setWorldBounds(-50, 50, -50, 50);
             boundsSystem.setEnforceWorldBounds(true);
         }
     }
@@ -127,9 +87,7 @@ public class GameBootstrap {
         logger.info("Player created with entity ID: {}", playerEntityId);
 
         createCameraForPlayer(playerEntityId);
-
         createDemoNPCs();
-
         createTestObjects();
 
         logger.info("Created initial entities");
@@ -137,13 +95,29 @@ public class GameBootstrap {
 
     private void createCameraForPlayer(int playerId) {
         int cameraEntity = world.create();
+        logger.info("Creating camera entity: {} for player: {}", cameraEntity, playerId);
 
         Camera camera = new Camera();
-        camera.position.set(0, 30, 50);
+        camera.isIsometric = true;
 
         Position playerPos = world.getMapper(Position.class).get(playerId);
         if (playerPos != null) {
-            FollowTarget followTarget = new FollowTarget(
+            FollowTarget followTarget = new FollowTarget(playerId);
+            followTarget.targetX = playerPos.value.x;
+            followTarget.targetY = playerPos.value.y;
+            followTarget.targetZ = playerPos.value.z;
+
+            followTarget.followSpeed = 2.0f;
+
+            camera.target = new com.badlogic.gdx.math.Vector3(
+                    playerPos.value.x,
+                    playerPos.value.y,
+                    playerPos.value.z
+            );
+
+            camera.lookAt(playerPos.value.x, playerPos.value.y, playerPos.value.z);
+
+            camera.position.set(
                     playerPos.value.x,
                     playerPos.value.y,
                     playerPos.value.z
@@ -153,8 +127,11 @@ public class GameBootstrap {
                     .add(camera)
                     .add(followTarget);
 
-            logger.info("Camera created to follow player at ({}, {}, {})",
-                    followTarget.targetX, followTarget.targetY, followTarget.targetZ);
+            logger.info("Camera created with target: ({}, {}, {})",
+                    camera.target.x, camera.target.y, camera.target.z);
+            logger.info("Camera will use 120° isometric projection");
+        } else {
+            logger.error("Player position is null! Cannot create camera.");
         }
     }
 
@@ -176,7 +153,38 @@ public class GameBootstrap {
     }
 
     private void setupSystems() {
-        logger.info("Systems could be set up here");
+        logger.info("Setting up systems...");
+
+        if (cameraSystem != null) {
+            logger.info("CameraSystem found and ready");
+
+            if (cameraSystem.isCameraInitialized()) {
+                com.badlogic.gdx.graphics.PerspectiveCamera cam = cameraSystem.getPerspectiveCamera();
+                if (cam != null) {
+                    logger.info("Isometric camera initialized: pos=({}, {}, {}), fov={}, viewport={}x{}",
+                            cam.position.x, cam.position.y, cam.position.z,
+                            cam.fieldOfView,
+                            cam.viewportWidth, cam.viewportHeight);
+                }
+            } else {
+                logger.info("CameraSystem is initializing camera...");
+            }
+        } else {
+            logger.error("CameraSystem not found in world!");
+        }
+
+        if (renderSystem != null) {
+            logger.info("IsometricModelRenderSystem found and ready");
+        } else {
+            logger.error("IsometricModelRenderSystem not found in world!");
+        }
+
+        com.artemis.utils.ImmutableBag<com.artemis.BaseSystem> systems = world.getSystems();
+        logger.info("Available systems in world ({} total):", systems.size());
+        for (int i = 0; i < systems.size(); i++) {
+            com.artemis.BaseSystem system = systems.get(i);
+            logger.info("  {}. {}", i + 1, system.getClass().getSimpleName());
+        }
     }
 
     public void update(float deltaTime) {
@@ -186,49 +194,10 @@ public class GameBootstrap {
 
         world.setDelta(deltaTime);
         world.process();
-
-        if (gameCamera != null) {
-            gameCamera.update();
-        }
-
-        if (uiCamera != null) {
-            uiCamera.update();
-        }
     }
 
     public void render() {
-        if (!initialized) {
-            return;
-        }
 
-        // Gdx.gl.glClearColor(0.2f, 0.3f, 0.4f, 1);
-        // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
-        gameViewport.apply();
-
-        spriteBatch.setProjectionMatrix(gameCamera.combined);
-        spriteBatch.begin();
-
-        // TODO: rendering
-
-        spriteBatch.setColor(Color.DARK_GRAY);
-        spriteBatch.draw(whiteRegion,
-                gameCamera.position.x - 250f,
-                gameCamera.position.y - 250f,
-                500f,
-                500f
-        );
-        spriteBatch.setColor(Color.WHITE);
-
-        spriteBatch.end();
-
-        uiViewport.apply();
-        spriteBatch.setProjectionMatrix(uiCamera.combined);
-        spriteBatch.begin();
-
-        // TODO: UI
-
-        spriteBatch.end();
     }
 
     public void resize(int width, int height) {
@@ -237,9 +206,10 @@ public class GameBootstrap {
         }
 
         logger.info("Resizing to {}x{}", width, height);
-        gameViewport.update(width, height, true);
-        uiViewport.update(width, height, false);
-        uiCamera.position.set(uiCamera.viewportWidth / 2, uiCamera.viewportHeight / 2, 0);
+
+        if (cameraSystem != null) {
+            cameraSystem.resize(width, height);
+        }
     }
 
     public void pause() {
@@ -255,11 +225,6 @@ public class GameBootstrap {
     public void dispose() {
         logger.info("Disposing game resources...");
 
-        if (spriteBatch != null) {
-            spriteBatch.dispose();
-            spriteBatch = null;
-        }
-
         if (world != null) {
             world.dispose();
         }
@@ -270,26 +235,6 @@ public class GameBootstrap {
 
     public World getWorld() {
         return world;
-    }
-
-    public SpriteBatch getSpriteBatch() {
-        return spriteBatch;
-    }
-
-    public OrthographicCamera getGameCamera() {
-        return gameCamera;
-    }
-
-    public OrthographicCamera getUiCamera() {
-        return uiCamera;
-    }
-
-    public Viewport getGameViewport() {
-        return gameViewport;
-    }
-
-    public Viewport getUiViewport() {
-        return uiViewport;
     }
 
     public MainGameScreen getMainScreen() {
@@ -328,19 +273,8 @@ public class GameBootstrap {
         return cameraSystem;
     }
 
-    public void spawnCreature(String name, float x, float y) {
-        if (!initialized) {
-            logger.warn("Cannot spawn creature: game not initialized");
-            return;
-        }
-
-        int creatureId = creatureFactory.createNPC(name, x, y);
-        logger.info("Spawned creature '{}' at ({}, {}) with ID: {}", name, x, y, creatureId);
+    public IsometricModelRenderSystem getRenderSystem() {
+        return renderSystem;
     }
 
-    public List<Integer> getAllCreatureIds() {
-        List<Integer> creatureIds = new ArrayList<>();
-        // TODO: get IDs for all creatures
-        return creatureIds;
-    }
 }

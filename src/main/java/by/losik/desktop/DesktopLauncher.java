@@ -1,7 +1,7 @@
 package by.losik.desktop;
 
-import by.losik.SurvivalGame;
 import by.losik.core.CompositionRoot;
+import by.losik.core.SurvivalGame;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.google.inject.Guice;

@@ -4,9 +4,10 @@ import com.artemis.Component;
 
 public class State extends Component {
 
-    public EntityState current = EntityState.IDLE;
     public EntityState previous = EntityState.IDLE;
+    public EntityState current = EntityState.IDLE;
     public float stateTime = 0f;
+    public boolean rotationChanged = false;
 
     public State() {}
 

@@ -1,6 +1,5 @@
-package by.losik;
+package by.losik.core;
 
-import by.losik.core.GameBootstrap;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;

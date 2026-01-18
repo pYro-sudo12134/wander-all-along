@@ -8,7 +8,35 @@
     "weight": 60.0,
     "base_speed": 5.0,
     "base_damage": 10.0,
-    "default_skills": ["foraging", "cooking", "healing", "carpentry"]
+    "default_skills": ["foraging", "cooking", "healing"],
+    "model_path": "textures/i_am_crying.g3db",
+    "model_scale": 0.01
+  },
+  {
+    "creature_type": "WOLF",
+    "max_health": 60.0,
+    "health_regen": 0.7,
+    "inventory_slots": 5,
+    "max_carry_weight": 10.0,
+    "weight": 35.0,
+    "base_speed": 6.0,
+    "base_damage": 8.0,
+    "default_skills": [],
+    "model_path": "textures/i_am_crying.g3db",
+    "model_scale": 0.01
+  },
+  {
+    "creature_type": "BEAR",
+    "max_health": 150.0,
+    "health_regen": 0.3,
+    "inventory_slots": 8,
+    "max_carry_weight": 40.0,
+    "weight": 200.0,
+    "base_speed": 3.0,
+    "base_damage": 15.0,
+    "default_skills": [],
+    "model_path": "textures/i_am_crying.g3db",
+    "model_scale": 0.01
   },
   {
     "creature_type": "OTHER",
@@ -19,28 +47,8 @@
     "weight": 40.0,
     "base_speed": 4.0,
     "base_damage": 5.0,
-    "default_skills": []
-  },
-  {
-    "creature_type": "WOLF",
-    "max_health": 80.0,
-    "health_regen": 2.0,
-    "inventory_slots": 0,
-    "max_carry_weight": 0.0,
-    "weight": 50.0,
-    "base_speed": 7.0,
-    "base_damage": 15.0,
-    "default_skills": []
-  },
-  {
-    "creature_type": "BEAR",
-    "max_health": 200.0,
-    "health_regen": 1.0,
-    "inventory_slots": 0,
-    "max_carry_weight": 0.0,
-    "weight": 300.0,
-    "base_speed": 4.0,
-    "base_damage": 30.0,
-    "default_skills": []
+    "default_skills": [],
+    "model_path": "textures/i_am_crying.g3db",
+    "model_scale": 0.01
   }
 ]

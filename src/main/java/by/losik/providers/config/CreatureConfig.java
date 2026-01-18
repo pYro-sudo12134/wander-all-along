@@ -21,6 +21,8 @@ public class CreatureConfig extends BaseConfig<CreatureConfig.CreatureTemplate, 
         public final float baseSpeed;
         public final float baseDamage;
         public final List<String> defaultSkills;
+        public final String modelPath;
+        public final float modelScale;
 
         @JsonCreator
         public CreatureTemplate(
@@ -32,7 +34,9 @@ public class CreatureConfig extends BaseConfig<CreatureConfig.CreatureTemplate, 
                 @JsonProperty("weight") float weight,
                 @JsonProperty("base_speed") float baseSpeed,
                 @JsonProperty("base_damage") float baseDamage,
-                @JsonProperty("default_skills") List<String> defaultSkills
+                @JsonProperty("default_skills") List<String> defaultSkills,
+                @JsonProperty("model_path") String modelPath,
+                @JsonProperty("model_scale") Float modelScale
         ) {
             this.creatureType = CreatureType.valueOf(creatureTypeStr.toUpperCase());
             this.maxHealth = maxHealth;
@@ -43,6 +47,8 @@ public class CreatureConfig extends BaseConfig<CreatureConfig.CreatureTemplate, 
             this.baseSpeed = baseSpeed;
             this.baseDamage = baseDamage;
             this.defaultSkills = defaultSkills != null ? defaultSkills : List.of();
+            this.modelPath = modelPath != null ? modelPath : "models/default.g3db";
+            this.modelScale = modelScale != null ? modelScale : 1.0f;
         }
     }
 
@@ -70,12 +76,30 @@ public class CreatureConfig extends BaseConfig<CreatureConfig.CreatureTemplate, 
     protected void initializeDefaultTemplates() {
         templates.put(CreatureType.PLAYER, new CreatureTemplate(
                 "PLAYER", 100f, 1f, 30, 50f, 60f, 5f, 10f,
-                List.of("foraging", "cooking", "healing")
+                List.of("foraging", "cooking", "healing"),
+                "textures/i_am_crying.g3db",
+                0.5f
         ));
 
         templates.put(CreatureType.OTHER, new CreatureTemplate(
                 "OTHER", 50f, 0.5f, 10, 20f, 40f, 4f, 5f,
-                List.of()
+                List.of(),
+                "models/default.g3db",
+                0.3f
+        ));
+
+        templates.put(CreatureType.WOLF, new CreatureTemplate(
+                "WOLF", 60f, 0.7f, 5, 10f, 35f, 6f, 8f,
+                List.of(),
+                "models/wolf.g3db",
+                0.3f
+        ));
+
+        templates.put(CreatureType.BEAR, new CreatureTemplate(
+                "BEAR", 150f, 0.3f, 8, 40f, 200f, 3f, 15f,
+                List.of(),
+                "models/bear.g3db",
+                0.4f
         ));
 
         logger.info("Initialized {} default creature templates", templates.size());
@@ -95,6 +119,8 @@ public class CreatureConfig extends BaseConfig<CreatureConfig.CreatureTemplate, 
         public final float baseSpeed;
         public final float baseDamage;
         public final List<String> defaultSkills;
+        public final String modelPath;
+        public final float modelScale;
 
         public CreatureStats(CreatureTemplate template) {
             this.maxHealth = template.maxHealth;
@@ -105,6 +131,8 @@ public class CreatureConfig extends BaseConfig<CreatureConfig.CreatureTemplate, 
             this.baseSpeed = template.baseSpeed;
             this.baseDamage = template.baseDamage;
             this.defaultSkills = template.defaultSkills;
+            this.modelPath = template.modelPath;
+            this.modelScale = template.modelScale;
         }
     }
 }

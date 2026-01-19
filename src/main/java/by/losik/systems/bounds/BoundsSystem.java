@@ -1,4 +1,4 @@
-package by.losik.systems;
+package by.losik.systems.bounds;
 
 import by.losik.components.core.Bounds;
 import by.losik.components.core.Position;

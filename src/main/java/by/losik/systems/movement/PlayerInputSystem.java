@@ -1,4 +1,4 @@
-package by.losik.systems;
+package by.losik.systems.movement;
 
 import by.losik.components.core.Creature;
 import by.losik.components.core.CreatureType;
@@ -7,6 +7,8 @@ import by.losik.components.core.Jump;
 import by.losik.components.core.Velocity;
 import by.losik.components.core.Position;
 import by.losik.components.core.Rotation;
+import by.losik.systems.camera.CameraSystem;
+import by.losik.systems.inventory.InventorySystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.systems.IteratingSystem;

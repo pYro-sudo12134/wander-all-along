@@ -1,4 +1,4 @@
-package by.losik.systems;
+package by.losik.systems.camera;
 
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;

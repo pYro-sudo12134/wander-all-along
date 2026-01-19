@@ -4,12 +4,12 @@ import by.losik.components.core.Camera;
 import by.losik.components.core.FollowTarget;
 import by.losik.components.core.Position;
 import by.losik.providers.factories.CreatureFactory;
-import by.losik.systems.BoundsSystem;
-import by.losik.systems.CameraSystem;
-import by.losik.systems.InventorySystem;
-import by.losik.systems.IsometricModelRenderSystem;
-import by.losik.systems.MovementSystem;
-import by.losik.systems.PlayerInputSystem;
+import by.losik.systems.bounds.BoundsSystem;
+import by.losik.systems.camera.CameraSystem;
+import by.losik.systems.inventory.InventorySystem;
+import by.losik.systems.render.IsometricModelRenderSystem;
+import by.losik.systems.movement.MovementSystem;
+import by.losik.systems.movement.PlayerInputSystem;
 import by.losik.ui.MainGameScreen;
 import com.artemis.World;
 import com.badlogic.gdx.ApplicationAdapter;
@@ -214,6 +214,7 @@ public class GameBootstrap extends ApplicationAdapter {
         if (cameraSystem != null) {
             cameraSystem.resize(width, height);
             inventorySystem.resize(width, height);
+            renderSystem.resize(width, height);
         }
     }
 

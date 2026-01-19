@@ -1,9 +1,11 @@
-package by.losik.systems;
+package by.losik.systems.render;
 
 import by.losik.components.core.Creature;
 import by.losik.components.core.CreatureType;
 import by.losik.components.core.Model3D;
 import by.losik.components.core.Position;
+import by.losik.systems.bounds.GroundSystem;
+import by.losik.systems.camera.CameraSystem;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.systems.IteratingSystem;
@@ -86,7 +88,23 @@ public class IsometricModelRenderSystem extends IteratingSystem {
         }
 
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
+        checkAndFixCameraProjection();
+    }
+
+    private void checkAndFixCameraProjection() {
+        if (cameraSystem != null && cameraSystem.isCameraInitialized()) {
+            PerspectiveCamera camera = cameraSystem.getPerspectiveCamera();
+            if (camera != null) {
+                if (Math.abs(camera.viewportWidth - Gdx.graphics.getWidth()) > 1 ||
+                        Math.abs(camera.viewportHeight - Gdx.graphics.getHeight()) > 1) {
+
+                    cameraSystem.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                    logger.debug("Auto-fixed camera viewport to match window size");
+                }
+            }
+        }
     }
 
     @Override

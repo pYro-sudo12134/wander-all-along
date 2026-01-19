@@ -22,15 +22,15 @@ import by.losik.providers.factories.WeaponFactory;
 import by.losik.providers.flyweight.ModelFlyweight;
 import by.losik.providers.flyweight.SpriteFlyweight;
 import by.losik.providers.flyweight.TextureFlyweight;
-import by.losik.systems.BoundsSystem;
-import by.losik.systems.CameraSystem;
-import by.losik.systems.FollowTargetSystem;
-import by.losik.systems.GravitySystem;
-import by.losik.systems.GroundSystem;
-import by.losik.systems.InventorySystem;
-import by.losik.systems.IsometricModelRenderSystem;
-import by.losik.systems.MovementSystem;
-import by.losik.systems.PlayerInputSystem;
+import by.losik.systems.bounds.BoundsSystem;
+import by.losik.systems.camera.CameraSystem;
+import by.losik.systems.camera.FollowTargetSystem;
+import by.losik.systems.movement.GravitySystem;
+import by.losik.systems.bounds.GroundSystem;
+import by.losik.systems.inventory.InventorySystem;
+import by.losik.systems.render.IsometricModelRenderSystem;
+import by.losik.systems.movement.MovementSystem;
+import by.losik.systems.movement.PlayerInputSystem;
 import com.artemis.World;
 import com.artemis.WorldConfigurationBuilder;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -76,6 +76,7 @@ public class CompositionRoot extends AbstractModule {
         bind(FollowTargetSystem.class).in(Singleton.class);
         bind(GravitySystem.class).in(Singleton.class);
         bind(InventorySystem.class).in(Singleton.class);
+
     }
 
     @Provides

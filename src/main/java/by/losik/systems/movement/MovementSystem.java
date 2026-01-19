@@ -1,4 +1,4 @@
-package by.losik.systems;
+package by.losik.systems.movement;
 
 import by.losik.components.core.Position;
 import by.losik.components.core.Velocity;

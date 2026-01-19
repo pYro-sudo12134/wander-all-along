@@ -1,7 +1,8 @@
-package by.losik.systems;
+package by.losik.systems.camera;
 
 import by.losik.components.core.Creature;
 import by.losik.components.core.CreatureType;
+import by.losik.systems.inventory.InventorySystem;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -27,6 +28,7 @@ public class CameraSystem extends IteratingSystem {
     private boolean cameraInitialized = false;
     private boolean leftKeyWasPressed = false;
     private boolean rightKeyWasPressed = false;
+    private final float originalFOV = 60f;
 
     @Override
     protected void initialize() {
@@ -62,7 +64,8 @@ public class CameraSystem extends IteratingSystem {
         perspectiveCamera.up.set(0, 1, 0);
         perspectiveCamera.near = 0.1f;
         perspectiveCamera.far = 100f;
-        perspectiveCamera.fieldOfView = 60f;
+        perspectiveCamera.fieldOfView = originalFOV;
+        perspectiveCamera.update();
     }
     @Override
     protected void process(int entityId) {
@@ -188,14 +191,24 @@ public class CameraSystem extends IteratingSystem {
 
     public void resize(int width, int height) {
         if (perspectiveCamera != null) {
+            Vector3 savedPosition = new Vector3(perspectiveCamera.position);
+            Vector3 savedDirection = new Vector3(perspectiveCamera.direction);
+            Vector3 savedUp = new Vector3(perspectiveCamera.up);
+
             perspectiveCamera.viewportWidth = width;
             perspectiveCamera.viewportHeight = height;
 
-            float aspectRatio = (float)width / height;
-            perspectiveCamera.fieldOfView = 60f;
+            perspectiveCamera.fieldOfView = originalFOV;
 
             perspectiveCamera.update();
-            logger.info("Camera resized to {}x{} (aspect: {})", width, height, aspectRatio);
+
+            perspectiveCamera.position.set(savedPosition);
+            perspectiveCamera.direction.set(savedDirection);
+            perspectiveCamera.up.set(savedUp);
+
+            perspectiveCamera.update();
+
+            logger.info("Camera resized to {}x{} (FOV: {})", width, height, originalFOV);
         }
     }
 

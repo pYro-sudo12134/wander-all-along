@@ -6,11 +6,14 @@ import by.losik.components.core.Position;
 import by.losik.providers.factories.CreatureFactory;
 import by.losik.systems.BoundsSystem;
 import by.losik.systems.CameraSystem;
+import by.losik.systems.InventorySystem;
 import by.losik.systems.IsometricModelRenderSystem;
 import by.losik.systems.MovementSystem;
 import by.losik.systems.PlayerInputSystem;
 import by.losik.ui.MainGameScreen;
 import com.artemis.World;
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -18,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class GameBootstrap {
+public class GameBootstrap extends ApplicationAdapter {
     private static final Logger logger = LoggerFactory.getLogger(GameBootstrap.class);
 
     private final World world;
@@ -29,6 +32,7 @@ public class GameBootstrap {
     private BoundsSystem boundsSystem;
     private CameraSystem cameraSystem;
     private IsometricModelRenderSystem renderSystem;
+    private InventorySystem inventorySystem;
     private boolean initialized = false;
     private boolean paused = false;
     private int playerEntityId = -1;
@@ -69,13 +73,14 @@ public class GameBootstrap {
         boundsSystem = world.getSystem(BoundsSystem.class);
         cameraSystem = world.getSystem(CameraSystem.class);
         renderSystem = world.getSystem(IsometricModelRenderSystem.class);
+        inventorySystem = world.getSystem(InventorySystem.class);
 
         if (playerInputSystem != null) {
             playerInputSystem.setMovementSpeed(5.0f);
         }
 
         if (boundsSystem != null) {
-            boundsSystem.setWorldBounds(-50, 50, -50, 50);
+            boundsSystem.setAllBounds(-50, 50, -10, 100, -50, 50);
             boundsSystem.setEnforceWorldBounds(true);
         }
     }
@@ -89,7 +94,6 @@ public class GameBootstrap {
         createCameraForPlayer(playerEntityId);
         createDemoNPCs();
         createTestObjects();
-
         logger.info("Created initial entities");
     }
 
@@ -129,7 +133,7 @@ public class GameBootstrap {
 
             logger.info("Camera created with target: ({}, {}, {})",
                     camera.target.x, camera.target.y, camera.target.z);
-            logger.info("Camera will use 120° isometric projection");
+            logger.info("Camera will use 120 isometric projection");
         } else {
             logger.error("Player position is null! Cannot create camera.");
         }
@@ -197,7 +201,7 @@ public class GameBootstrap {
     }
 
     public void render() {
-
+        update(Gdx.graphics.getDeltaTime());
     }
 
     public void resize(int width, int height) {
@@ -209,6 +213,7 @@ public class GameBootstrap {
 
         if (cameraSystem != null) {
             cameraSystem.resize(width, height);
+            inventorySystem.resize(width, height);
         }
     }
 

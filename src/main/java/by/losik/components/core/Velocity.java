@@ -5,6 +5,8 @@ import org.joml.Vector3f;
 
 public class Velocity extends Component {
     public final Vector3f value = new Vector3f();
+    public float jumpSpeed = 15f;
+    public float crouchSpeed = 5f;
 
     public Velocity() {}
 

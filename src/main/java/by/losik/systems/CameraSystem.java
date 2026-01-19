@@ -1,5 +1,7 @@
 package by.losik.systems;
 
+import by.losik.components.core.Creature;
+import by.losik.components.core.CreatureType;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -20,6 +22,7 @@ public class CameraSystem extends IteratingSystem {
     private static final Logger logger = LoggerFactory.getLogger(CameraSystem.class);
     protected ComponentMapper<Camera> mCamera;
     protected ComponentMapper<FollowTarget> mFollowTarget;
+    protected ComponentMapper<Creature> mCreature;
     private PerspectiveCamera perspectiveCamera;
     private boolean cameraInitialized = false;
     private boolean leftKeyWasPressed = false;
@@ -38,7 +41,7 @@ public class CameraSystem extends IteratingSystem {
 
         try {
             logger.info("Attempting to create PerspectiveCamera...");
-            perspectiveCamera = new PerspectiveCamera(67, 800, 600);
+            perspectiveCamera = new PerspectiveCamera(45, 800, 600);
             setupIsometricProjection();
             cameraInitialized = true;
 
@@ -94,17 +97,35 @@ public class CameraSystem extends IteratingSystem {
     }
 
     private void handleCameraRotationInput(Camera camera) {
+        InventorySystem inventorySystem = world.getSystem(InventorySystem.class);
+        if (inventorySystem != null) {
+            com.artemis.utils.IntBag players = world.getAspectSubscriptionManager()
+                    .get(Aspect.all(Creature.class))
+                    .getEntities();
+
+            for (int i = 0; i < players.size(); i++) {
+                int playerId = players.get(i);
+                Creature creature = mCreature.get(playerId);
+                if (creature != null && creature.type == CreatureType.PLAYER &&
+                        inventorySystem.isInventoryOpen(playerId)) {
+                    leftKeyWasPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT);
+                    rightKeyWasPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
+                    return;
+                }
+            }
+        }
+
         boolean leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT);
         boolean rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 
         if (leftPressed && !leftKeyWasPressed && !camera.isRotating) {
             camera.rotateLeft();
-            logger.info("Rotating camera left to angle: {}°", camera.targetAngleXZ);
+            logger.info("Rotating camera left to angle: {}", camera.targetAngleXZ);
         }
 
         if (rightPressed && !rightKeyWasPressed && !camera.isRotating) {
             camera.rotateRight();
-            logger.info("Rotating camera right to angle: {}°", camera.targetAngleXZ);
+            logger.info("Rotating camera right to angle: {}", camera.targetAngleXZ);
         }
 
         leftKeyWasPressed = leftPressed;
@@ -125,7 +146,7 @@ public class CameraSystem extends IteratingSystem {
             if (Math.abs(angleDifference) <= maxRotation) {
                 camera.angleXZ = camera.targetAngleXZ;
                 camera.isRotating = false;
-                logger.debug("Camera rotation completed at angle: {}°", camera.angleXZ);
+                logger.debug("Camera rotation completed at angle: {}", camera.angleXZ);
             } else {
                 camera.angleXZ += Math.signum(angleDifference) * maxRotation;
 
@@ -159,7 +180,7 @@ public class CameraSystem extends IteratingSystem {
             camera.position.lerp(desiredPosition, alpha);
         }
 
-        logger.debug("Camera position updated: target=({}, {}, {}), camera=({}, {}, {}), angle={}°",
+        logger.debug("Camera position updated: target=({}, {}, {}), camera=({}, {}, {}), angle={}",
                 follow.targetX, follow.targetY, follow.targetZ,
                 camera.position.x, camera.position.y, camera.position.z,
                 camera.angleXZ);
@@ -200,5 +221,9 @@ public class CameraSystem extends IteratingSystem {
         }
 
         return 45f;
+    }
+
+    public void setPerspectiveCamera(PerspectiveCamera perspectiveCamera) {
+        this.perspectiveCamera = perspectiveCamera;
     }
 }

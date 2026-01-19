@@ -9,6 +9,7 @@ import by.losik.components.core.CreatureType;
 import by.losik.components.core.Gravity;
 import by.losik.components.core.ID;
 import by.losik.components.core.Inventory;
+import by.losik.components.core.InventoryState;
 import by.losik.components.core.Jump;
 import by.losik.components.core.Model3D;
 import by.losik.components.core.Position;
@@ -71,6 +72,7 @@ public class CreatureFactory extends EntityFactory {
                 .add(new Creature(id, creatureType))
                 .add(new Health(stats.maxHealth, stats.maxHealth, stats.healthRegen))
                 .add(new Needs())
+                .add(new InventoryState())
                 .add(new Inventory(stats.inventorySlots))
                 .add(new CarryingCapacity(stats.maxCarryWeight, 0f))
                 .add(new Weight(stats.weight))

@@ -5,7 +5,9 @@ import by.losik.components.core.Position;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.systems.IteratingSystem;
+import com.google.inject.Singleton;
 
+@Singleton
 @All({Position.class, Bounds.class})
 public class BoundsSystem extends IteratingSystem {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BoundsSystem.class);

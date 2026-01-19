@@ -13,9 +13,11 @@ import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector3;
+import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 @All({Creature.class, Velocity.class, Position.class})
 public class PlayerInputSystem extends IteratingSystem {
     private static final Logger logger = LoggerFactory.getLogger(PlayerInputSystem.class);
@@ -28,8 +30,6 @@ public class PlayerInputSystem extends IteratingSystem {
     private CameraSystem cameraSystem;
 
     private float movementSpeed = 10.0f;
-    private final float jumpSpeed = 15.0f;
-    private final float crouchSpeed = 5.0f;
     private boolean spaceKeyWasPressed = false;
 
     @Override
@@ -43,6 +43,14 @@ public class PlayerInputSystem extends IteratingSystem {
         Position position = mPosition.get(entityId);
 
         if (creature.type == CreatureType.PLAYER) {
+            InventorySystem inventorySystem = world.getSystem(InventorySystem.class);
+            if (inventorySystem != null && inventorySystem.isInventoryOpen(entityId)) {
+                Velocity velocity = mVelocity.get(entityId);
+                velocity.value.x = 0;
+                velocity.value.z = 0;
+                return;
+            }
+
             Velocity velocity = mVelocity.get(entityId);
 
             velocity.value.x = 0;
@@ -97,7 +105,7 @@ public class PlayerInputSystem extends IteratingSystem {
                     rotation.isRotating = true;
                     position.rotation = rotation.current;
 
-                    logger.debug("Camera angle: {}, Move dir=({}, {}), Look dir=({}, {}), target rotation={}°",
+                    logger.debug("Camera angle: {}, Move dir=({}, {}), Look dir=({}, {}), target rotation={}",
                             cameraAngle,
                             moveDirection.x, moveDirection.z,
                             moveX, moveZ,
@@ -129,7 +137,7 @@ public class PlayerInputSystem extends IteratingSystem {
                     }
                 } else {
                     logger.debug("No gravity/jump components for player, using old jump logic");
-                    velocity.value.y = jumpSpeed;
+                    velocity.value.y = velocity.jumpSpeed;
                 }
             }
 
@@ -140,11 +148,11 @@ public class PlayerInputSystem extends IteratingSystem {
                 if (mGravity.has(entityId)) {
                     Gravity gravity = mGravity.get(entityId);
                     if (gravity.isGrounded) {
-                        movementSpeed = crouchSpeed;
+                        movementSpeed = velocity.crouchSpeed;
                         logger.debug("Player crouching, speed: {}", movementSpeed);
                     }
                 } else {
-                    velocity.value.y = -crouchSpeed;
+                    velocity.value.y = -velocity.crouchSpeed;
                 }
             } else {
                 movementSpeed = 10.0f;

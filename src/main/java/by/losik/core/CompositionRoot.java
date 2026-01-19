@@ -1,11 +1,36 @@
 package by.losik.core;
 
-import by.losik.providers.factories.*;
+import by.losik.providers.config.ArmorConfig;
+import by.losik.providers.config.ConfigManager;
+import by.losik.providers.config.CreatureConfig;
+import by.losik.providers.config.ItemConfig;
+import by.losik.providers.config.WeaponConfig;
+import by.losik.providers.factories.ArmorFactory;
+import by.losik.providers.factories.ConsumableItemFactory;
+import by.losik.providers.factories.ContainerItemFactory;
+import by.losik.providers.factories.CreatureFactory;
+import by.losik.providers.factories.CropFactory;
+import by.losik.providers.factories.DiseaseFactory;
+import by.losik.providers.factories.FoodItemFactory;
+import by.losik.providers.factories.ItemFactory;
+import by.losik.providers.factories.MaterialItemFactory;
+import by.losik.providers.factories.ResourceItemFactory;
+import by.losik.providers.factories.StoneFactory;
+import by.losik.providers.factories.ToolItemFactory;
+import by.losik.providers.factories.TreeFactory;
+import by.losik.providers.factories.WeaponFactory;
 import by.losik.providers.flyweight.ModelFlyweight;
 import by.losik.providers.flyweight.SpriteFlyweight;
 import by.losik.providers.flyweight.TextureFlyweight;
-import by.losik.providers.config.*;
-import by.losik.systems.*;
+import by.losik.systems.BoundsSystem;
+import by.losik.systems.CameraSystem;
+import by.losik.systems.FollowTargetSystem;
+import by.losik.systems.GravitySystem;
+import by.losik.systems.GroundSystem;
+import by.losik.systems.InventorySystem;
+import by.losik.systems.IsometricModelRenderSystem;
+import by.losik.systems.MovementSystem;
+import by.losik.systems.PlayerInputSystem;
 import com.artemis.World;
 import com.artemis.WorldConfigurationBuilder;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -50,6 +75,7 @@ public class CompositionRoot extends AbstractModule {
         bind(GroundSystem.class).in(Singleton.class);
         bind(FollowTargetSystem.class).in(Singleton.class);
         bind(GravitySystem.class).in(Singleton.class);
+        bind(InventorySystem.class).in(Singleton.class);
     }
 
     @Provides
@@ -62,7 +88,8 @@ public class CompositionRoot extends AbstractModule {
             IsometricModelRenderSystem isometricRenderSystem,
             GroundSystem groundSystem,
             FollowTargetSystem followTargetSystem,
-            GravitySystem gravitySystem) {
+            GravitySystem gravitySystem,
+            InventorySystem inventorySystem) {
 
         WorldConfigurationBuilder config = new WorldConfigurationBuilder();
         config.with(playerInputSystem)
@@ -72,7 +99,8 @@ public class CompositionRoot extends AbstractModule {
                 .with(cameraSystem)
                 .with(isometricRenderSystem)
                 .with(groundSystem)
-                .with(gravitySystem);
+                .with(gravitySystem)
+                .with(inventorySystem);
 
         // .with(new CombatSystem())
         // .with(new HealthSystem())

@@ -7,7 +7,9 @@ import by.losik.components.core.Velocity;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.systems.IteratingSystem;
+import com.google.inject.Singleton;
 
+@Singleton
 @All({Position.class, Gravity.class})
 public class GravitySystem extends IteratingSystem {
     protected ComponentMapper<Position> mPosition;

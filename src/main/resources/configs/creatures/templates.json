@@ -8,7 +8,12 @@
     "weight": 60.0,
     "base_speed": 5.0,
     "base_damage": 10.0,
-    "default_skills": ["foraging", "cooking", "healing"],
+    "default_skills":
+    ["foraging", "cooking",
+      "healing", "carpentry",
+      "farming", "fishing",
+      "mechanics", "tailoring",
+      "magic", "attunement"],
     "model_path": "textures/i_am_crying.g3db",
     "model_scale": 0.001
   },

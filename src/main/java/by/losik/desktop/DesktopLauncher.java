@@ -12,12 +12,12 @@ public class DesktopLauncher {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 
         config.setWindowIcon("textures/default.png");
-        config.setTitle("Survival Game");
+        config.setTitle("bat sipson");
         config.setWindowedMode(1280, 720);
         config.setResizable(true);
         config.setForegroundFPS(60);
         config.setIdleFPS(30);
-        config.useVsync(true);
+        config.useVsync(false);
         config.setBackBufferConfig(8, 8, 8, 8, 16, 0, 4);
 
         Injector injector = Guice.createInjector(new CompositionRoot());

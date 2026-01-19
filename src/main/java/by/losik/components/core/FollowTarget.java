@@ -8,9 +8,6 @@ public class FollowTarget extends Component {
     public float targetY;
     public float targetZ;
     public float followSpeed = 0.1f;
-    public float offsetX = 0;
-    public float offsetY = 15f;
-    public float offsetZ = 15f;
 
     public FollowTarget() {}
 

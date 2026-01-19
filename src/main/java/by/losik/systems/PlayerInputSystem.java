@@ -6,6 +6,7 @@ import by.losik.components.core.Gravity;
 import by.losik.components.core.Jump;
 import by.losik.components.core.Velocity;
 import by.losik.components.core.Position;
+import by.losik.components.core.Rotation;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.systems.IteratingSystem;
@@ -23,19 +24,18 @@ public class PlayerInputSystem extends IteratingSystem {
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Gravity> mGravity;
     protected ComponentMapper<Jump> mJump;
+    protected ComponentMapper<Rotation> mRotation;
+    private CameraSystem cameraSystem;
 
     private float movementSpeed = 10.0f;
     private final float jumpSpeed = 15.0f;
     private final float crouchSpeed = 5.0f;
     private boolean spaceKeyWasPressed = false;
 
-
-    private final Vector3[] isoDirections = {
-            new Vector3(0.707f, 0, -0.707f),   // (W+D)
-            new Vector3(0.707f, 0, 0.707f),    // (S+D)
-            new Vector3(-0.707f, 0, -0.707f),  // (W+A)
-            new Vector3(-0.707f, 0, 0.707f)    // (S+A)
-    };
+    @Override
+    protected void initialize() {
+        cameraSystem = world.getSystem(CameraSystem.class);
+    }
 
     @Override
     protected void process(int entityId) {
@@ -48,40 +48,38 @@ public class PlayerInputSystem extends IteratingSystem {
             velocity.value.x = 0;
             velocity.value.z = 0;
 
+            float cameraAngle = cameraSystem.getCurrentCameraAngle();
+            float cameraAngleRad = (float) Math.toRadians(cameraAngle);
+
+            Vector3 forward = new Vector3();
+            Vector3 right = new Vector3();
+
+            forward.x = (float) Math.sin(cameraAngleRad);
+            forward.z = (float) Math.cos(cameraAngleRad);
+            forward.y = 0;
+
+            right.x = forward.z;
+            right.z = -forward.x;
+            right.y = 0;
+
             Vector3 moveDirection = new Vector3(0, 0, 0);
-            boolean diagonalMove = false;
 
             if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-                if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-                    moveDirection.add(isoDirections[0]);
-                    diagonalMove = true;
-                } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-                    moveDirection.add(isoDirections[2]);
-                    diagonalMove = true;
-                } else {
-                    moveDirection.add(new Vector3(0, 0, -1));
-                }
+                Vector3 wDir = new Vector3(forward).scl(-1);
+                moveDirection.add(wDir);
             }
 
             if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-                if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-                    moveDirection.add(isoDirections[1]);
-                    diagonalMove = true;
-                } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-                    moveDirection.add(isoDirections[3]);
-                    diagonalMove = true;
-                } else {
-                    moveDirection.add(new Vector3(0, 0, 1));
-                }
+                moveDirection.add(forward);
             }
 
-            if (!diagonalMove) {
-                if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-                    moveDirection.add(new Vector3(1, 0, 0));
-                }
-                if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-                    moveDirection.add(new Vector3(-1, 0, 0));
-                }
+            if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+                moveDirection.add(right);
+            }
+
+            if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+                Vector3 aDir = new Vector3(right).scl(-1);
+                moveDirection.add(aDir);
             }
 
             if (moveDirection.len() > 0.01f) {
@@ -89,11 +87,22 @@ public class PlayerInputSystem extends IteratingSystem {
                 velocity.value.x = moveDirection.x;
                 velocity.value.z = moveDirection.z;
 
-                position.rotation = (float) Math.atan2(moveDirection.x, moveDirection.z);
+                if (moveDirection.len() > 0.1f) {
+                    float moveX = -moveDirection.x;
+                    float moveZ = -moveDirection.z;
+                    float targetRotation = (float) Math.atan2(moveX, moveZ);
 
-                logger.debug("Player moving: direction=({}, {}), rotation={} radians ({} degrees)",
-                        moveDirection.x, moveDirection.z,
-                        position.rotation, Math.toDegrees(position.rotation));
+                    Rotation rotation = getOrCreateRotation(entityId);
+                    rotation.target = targetRotation;
+                    rotation.isRotating = true;
+                    position.rotation = rotation.current;
+
+                    logger.debug("Camera angle: {}, Move dir=({}, {}), Look dir=({}, {}), target rotation={}°",
+                            cameraAngle,
+                            moveDirection.x, moveDirection.z,
+                            moveX, moveZ,
+                            Math.toDegrees(targetRotation));
+                }
             }
 
             boolean spacePressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
@@ -140,6 +149,18 @@ public class PlayerInputSystem extends IteratingSystem {
             } else {
                 movementSpeed = 10.0f;
             }
+        }
+    }
+
+    private Rotation getOrCreateRotation(int entityId) {
+        if (mRotation.has(entityId)) {
+            return mRotation.get(entityId);
+        } else {
+            Rotation rotation = new Rotation();
+            rotation.current = mPosition.get(entityId).rotation;
+            rotation.target = rotation.current;
+            world.edit(entityId).add(rotation);
+            return rotation;
         }
     }
 

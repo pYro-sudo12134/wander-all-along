@@ -10,8 +10,9 @@ import by.losik.components.core.Gravity;
 import by.losik.components.core.ID;
 import by.losik.components.core.Inventory;
 import by.losik.components.core.Jump;
-import by.losik.components.core.Model3D; // ИМПОРТ
+import by.losik.components.core.Model3D;
 import by.losik.components.core.Position;
+import by.losik.components.core.Rotation;
 import by.losik.components.core.State;
 import by.losik.components.core.Velocity;
 import by.losik.components.core.Weight;
@@ -53,6 +54,7 @@ public class CreatureFactory extends EntityFactory {
                 .add(new State())
                 .add(new Gravity())
                 .add(new Jump())
+                .add(new Rotation())
                 .add(new Tag(creatureType.getCreatureType()))
                 .add(new Description("A " + creatureType.getCreatureType() + " named " + name));
 

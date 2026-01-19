@@ -10,7 +10,7 @@
     "base_damage": 10.0,
     "default_skills": ["foraging", "cooking", "healing"],
     "model_path": "textures/i_am_crying.g3db",
-    "model_scale": 0.01
+    "model_scale": 0.001
   },
   {
     "creature_type": "WOLF",
@@ -23,7 +23,7 @@
     "base_damage": 8.0,
     "default_skills": [],
     "model_path": "textures/i_am_crying.g3db",
-    "model_scale": 0.01
+    "model_scale": 0.001
   },
   {
     "creature_type": "BEAR",
@@ -36,7 +36,7 @@
     "base_damage": 15.0,
     "default_skills": [],
     "model_path": "textures/i_am_crying.g3db",
-    "model_scale": 0.01
+    "model_scale": 0.001
   },
   {
     "creature_type": "OTHER",
@@ -49,6 +49,6 @@
     "base_damage": 5.0,
     "default_skills": [],
     "model_path": "textures/i_am_crying.g3db",
-    "model_scale": 0.01
+    "model_scale": 0.001
   }
 ]

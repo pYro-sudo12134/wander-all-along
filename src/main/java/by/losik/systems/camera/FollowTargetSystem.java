@@ -20,7 +20,7 @@ public class FollowTargetSystem extends IteratingSystem {
         if (follow.targetEntityId >= 0 && mPosition.has(follow.targetEntityId)) {
             Position targetPos = mPosition.get(follow.targetEntityId);
 
-            float alpha = Math.min(follow.followSpeed * world.getDelta() * 60f, 1f);
+            float alpha = Math.min(follow.followSpeed * world.getDelta() * 30f, 1f);
             follow.targetX += (targetPos.value.x - follow.targetX) * alpha;
             follow.targetY += (targetPos.value.y - follow.targetY) * alpha;
             follow.targetZ += (targetPos.value.z - follow.targetZ) * alpha;

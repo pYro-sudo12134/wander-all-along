@@ -42,13 +42,12 @@ public class CollisionSystem extends IteratingSystem {
     private final Map<Integer, Map<Integer, CollisionData>> collisionTimestamps = new HashMap<>();
     private final Map<Integer, Set<Integer>> currentCollisions = new HashMap<>();
     private final Map<Integer, Set<Integer>> lastFrameCollisions = new HashMap<>();
-
     private final SpatialGrid spatialGrid;
     private boolean useSpatialGrid = true;
     private float spatialGridCellSize = 5.0f;
-    private float collisionTolerance = 0.01f;
-    private float minCollisionDuration = 0.1f;
-    private float collisionCooldown = 0.3f;
+    private float collisionTolerance = 0.1f;
+    private float minCollisionDuration = 0.01f;
+    private float collisionCooldown = 0.1f;
     private float persistentCollisionThreshold = 1.0f;
     private float raycastTimeout = 2.0f;
     private boolean detectPlayerCollisions = true;
@@ -58,7 +57,7 @@ public class CollisionSystem extends IteratingSystem {
     private float lastStatLogTime = 0f;
     private float statLogInterval = 5.0f;
     private final Vector3f tempVec1 = new Vector3f();
-    private final Vector3f tempVec3 = new Vector3f();
+    private final Set<String> processedPairsThisFrame = new HashSet<>();
 
     @Inject
     public CollisionSystem() {
@@ -88,6 +87,8 @@ public class CollisionSystem extends IteratingSystem {
         lastFrameCollisions.putAll(currentCollisions);
         currentCollisions.clear();
         cleanupOldCollisionData(currentTime);
+
+        processedPairsThisFrame.clear();
 
         if (useSpatialGrid) {
             spatialGrid.clear();
@@ -333,6 +334,12 @@ public class CollisionSystem extends IteratingSystem {
     private void handleCollision(int entityId1, int entityId2) {
         float currentTime = getCurrentTime();
 
+        String pairKey = Math.min(entityId1, entityId2) + "_" + Math.max(entityId1, entityId2);
+        if (processedPairsThisFrame.contains(pairKey)) {
+            return;
+        }
+        processedPairsThisFrame.add(pairKey);
+
         registerCollision(entityId1, entityId2);
 
         CollisionData data = getOrCreateCollisionData(entityId1, entityId2);
@@ -472,8 +479,8 @@ public class CollisionSystem extends IteratingSystem {
             return;
         }
 
-        float mass1 = mWeight.get(entityId1).value;
-        float mass2 = mWeight.get(entityId2).value;
+        float mass1 = mWeight.has(entityId1) ? mWeight.get(entityId1).value : 1.0f;
+        float mass2 = mWeight.has(entityId2) ? mWeight.get(entityId2).value : 1.0f;
 
         if (vel1 == null) mass1 = Float.POSITIVE_INFINITY;
         if (vel2 == null) mass2 = Float.POSITIVE_INFINITY;
@@ -493,8 +500,8 @@ public class CollisionSystem extends IteratingSystem {
             vel2.value.add(new Vector3f(impulse).div(mass2));
             applyPostCollisionDamping(entityId2);
         }
+
         applyFriction(entityId1, entityId2, normal);
-        applyPositionalCorrection(entityId1, entityId2, normal);
     }
 
     private void applyPostCollisionDamping(int entityId) {
@@ -559,31 +566,6 @@ public class CollisionSystem extends IteratingSystem {
             return 0.5f;
         } else {
             return 0.7f;
-        }
-    }
-
-    private void applyPositionalCorrection(int entityId1, int entityId2, Vector3f normal) {
-        float penetration = getPenetrationDepth(entityId1, entityId2);
-        if (penetration > 0) {
-            Position pos1 = mPosition.get(entityId1);
-            Position pos2 = mPosition.get(entityId2);
-
-            float mass1 = mWeight.get(entityId1).value;
-            float mass2 = mWeight.get(entityId2).value;
-            float totalMass = mass1 + mass2;
-
-            float pushFactor1 = (totalMass > 0) ? mass2 / totalMass : 0.5f;
-            float pushFactor2 = (totalMass > 0) ? mass1 / totalMass : 0.5f;
-
-            float correctionPercent = 0.2f;
-            float slop = 0.01f;
-            float totalCorrection = Math.max(penetration - slop, 0.0f) * correctionPercent;
-
-            tempVec3.set(normal).mul(totalCorrection * pushFactor1);
-            pos1.value.sub(tempVec3);
-
-            tempVec3.set(normal).mul(totalCorrection * pushFactor2);
-            pos2.value.add(tempVec3);
         }
     }
 

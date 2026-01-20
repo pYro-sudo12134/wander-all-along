@@ -92,7 +92,7 @@ public class PlayerInputSystem extends IteratingSystem {
             }
 
             if (moveDirection.len() > 0.01f) {
-                moveDirection.nor().scl(movementSpeed);
+                moveDirection.nor().scl(movementSpeed * 0.75f); //just for now to have a lower speed
 
                 if (movementSystem != null) {
                     movementSystem.setTargetVelocity(entityId, moveDirection.x, moveDirection.z);

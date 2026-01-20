@@ -9,12 +9,14 @@ import by.losik.components.core.Creature;
 import by.losik.components.core.CreatureType;
 import by.losik.components.core.Gravity;
 import by.losik.components.core.ID;
+import by.losik.components.core.Interpolation;
 import by.losik.components.core.Inventory;
 import by.losik.components.core.InventoryState;
 import by.losik.components.core.Jump;
 import by.losik.components.core.Model3D;
 import by.losik.components.core.Position;
 import by.losik.components.core.Rotation;
+import by.losik.components.core.SmoothPhysics;
 import by.losik.components.core.State;
 import by.losik.components.core.Velocity;
 import by.losik.components.core.Weight;
@@ -52,8 +54,10 @@ public class CreatureFactory extends EntityFactory {
                 .add(id)
                 .add(new Position(x, y, z))
                 .add(new Velocity())
-                .add(new Bounds(10f, 10f, 10f))
+                .add(new Bounds())
                 .add(new State())
+                .add(new SmoothPhysics())
+                .add(new Interpolation())
                 .add(new Gravity())
                 .add(new Jump())
                 .add(new Weight())
@@ -92,7 +96,6 @@ public class CreatureFactory extends EntityFactory {
         Model3D model3D = new Model3D();
         model3D.modelPath = stats.modelPath;
         model3D.scale = stats.modelScale;
-
         world.edit(entity).add(model3D);
     }
 

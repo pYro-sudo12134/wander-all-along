@@ -6,6 +6,7 @@ import by.losik.components.core.Model3D;
 import by.losik.components.core.Position;
 import by.losik.systems.bounds.GroundSystem;
 import by.losik.systems.camera.CameraSystem;
+import by.losik.systems.collisions.SmoothPhysicsSystem;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.systems.IteratingSystem;
@@ -19,6 +20,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.google.inject.Singleton;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +46,8 @@ public class IsometricModelRenderSystem extends IteratingSystem {
         super(Aspect.all(Position.class, Model3D.class));
     }
 
+    private SmoothPhysicsSystem smoothPhysicsSystem;
+
     @Override
     protected void initialize() {
         mPosition = world.getMapper(Position.class);
@@ -52,6 +56,9 @@ public class IsometricModelRenderSystem extends IteratingSystem {
 
         cameraSystem = world.getSystem(CameraSystem.class);
         groundSystem = world.getSystem(GroundSystem.class);
+        smoothPhysicsSystem = world.getSystem(SmoothPhysicsSystem.class);
+
+        logger.info("SmoothPhysicsSystem available: {}", smoothPhysicsSystem != null);
     }
 
     private void initResources() {
@@ -140,7 +147,16 @@ public class IsometricModelRenderSystem extends IteratingSystem {
     private void updateInstanceTransform(ModelInstance instance, Position position, Model3D model3D, int entityId) {
         com.badlogic.gdx.math.Matrix4 transform = new com.badlogic.gdx.math.Matrix4();
         transform.idt();
-        transform.translate(position.value.x, position.value.y, position.value.z);
+
+        Vector3f renderPosition;
+        if (smoothPhysicsSystem != null && smoothPhysicsSystem.hasSmoothPhysics(entityId)) {
+            renderPosition = smoothPhysicsSystem.getRenderPosition(entityId);
+            logger.debug("Using smooth position for entity {}: {}", entityId, renderPosition);
+        } else {
+            renderPosition = position.value;
+        }
+
+        transform.translate(renderPosition.x, renderPosition.y, renderPosition.z);
 
         if (mCreature.has(entityId) && Math.abs(position.rotation) > 0.001f) {
             float degrees = (float) Math.toDegrees(position.rotation);

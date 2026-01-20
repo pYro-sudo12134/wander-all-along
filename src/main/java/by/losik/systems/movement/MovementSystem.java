@@ -304,7 +304,6 @@ public class MovementSystem extends IteratingSystem {
             Velocity velocity = mVelocity.get(entityId);
             velocity.value.set(0, 0, 0);
         }
-        // Также очищаем целевую скорость
         targetVelocities.remove(entityId);
     }
 

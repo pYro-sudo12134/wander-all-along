@@ -3,9 +3,9 @@ package by.losik.components.core;
 import com.artemis.Component;
 
 public class Bounds extends Component {
-    private float width = 10f;
-    private float height = 10f;
-    private float depth = 10f;
+    private float width = 2f;
+    private float height = 2f;
+    private float depth = 2f;
 
     public Bounds() {}
 

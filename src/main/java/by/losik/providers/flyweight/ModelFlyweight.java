@@ -10,9 +10,21 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class ModelFlyweight {
     private static final Logger logger = LoggerFactory.getLogger(ModelFlyweight.class);
+    private static ModelFlyweight instance;
 
     private final ObjectMap<String, Model> modelCache = new ObjectMap<>();
     private final ObjectMap<Integer, ModelInstance> instanceCache = new ObjectMap<>();
+
+    public static ModelFlyweight getInstance() {
+        if (instance == null) {
+            synchronized (ModelFlyweight.class) {
+                if (instance == null) {
+                    instance = new ModelFlyweight();
+                }
+            }
+        }
+        return instance;
+    }
 
     public Model getModel(String modelPath) {
         if (modelPath == null || modelPath.trim().isEmpty()) {

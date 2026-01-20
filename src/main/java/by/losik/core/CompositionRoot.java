@@ -26,6 +26,7 @@ import by.losik.systems.bounds.BoundsSystem;
 import by.losik.systems.camera.CameraSystem;
 import by.losik.systems.camera.FollowTargetSystem;
 import by.losik.systems.collisions.CollisionSystem;
+import by.losik.systems.collisions.SmoothPhysicsSystem;
 import by.losik.systems.movement.GravitySystem;
 import by.losik.systems.bounds.GroundSystem;
 import by.losik.systems.inventory.InventorySystem;
@@ -80,6 +81,7 @@ public class CompositionRoot extends AbstractModule {
         bind(InventorySystem.class).in(Singleton.class);
         bind(TimeSystem.class).in(Singleton.class);
         bind(CollisionSystem.class).in(Singleton.class);
+        bind(SmoothPhysicsSystem.class).in(Singleton.class);
     }
 
     @Provides
@@ -95,7 +97,8 @@ public class CompositionRoot extends AbstractModule {
             GravitySystem gravitySystem,
             InventorySystem inventorySystem,
             TimeSystem timeSystem,
-            CollisionSystem collisionSystem) {
+            CollisionSystem collisionSystem,
+            SmoothPhysicsSystem smoothPhysicsSystem) {
 
         WorldConfigurationBuilder config = new WorldConfigurationBuilder();
         config.with(timeSystem)
@@ -104,6 +107,7 @@ public class CompositionRoot extends AbstractModule {
                 .with(gravitySystem)
                 .with(boundsSystem)
                 .with(collisionSystem)
+                .with(smoothPhysicsSystem)
                 .with(followTargetSystem)
                 .with(cameraSystem)
                 .with(isometricRenderSystem)

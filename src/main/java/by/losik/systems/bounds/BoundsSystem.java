@@ -73,19 +73,15 @@ public class BoundsSystem extends IteratingSystem {
 
         if (futureX - halfWidth < worldMinX) {
             position.value.x = worldMinX + halfWidth;
-            if (velocity.value.x < 0 && Math.abs(velocity.value.x) > minBounceVelocity) {
+            if (velocity.value.x < 0) {
                 velocity.value.x = -velocity.value.x * wallBounceFactor;
                 logger.debug("Entity {} hit left wall, new X velocity: {}", entityId, velocity.value.x);
-            } else {
-                velocity.value.x = 0;
             }
         } else if (futureX + halfWidth > worldMaxX) {
             position.value.x = worldMaxX - halfWidth;
-            if (velocity.value.x > 0 && Math.abs(velocity.value.x) > minBounceVelocity) {
+            if (velocity.value.x > 0) {
                 velocity.value.x = -velocity.value.x * wallBounceFactor;
                 logger.debug("Entity {} hit right wall, new X velocity: {}", entityId, velocity.value.x);
-            } else {
-                velocity.value.x = 0;
             }
         } else {
             position.value.x = futureX;
@@ -93,19 +89,15 @@ public class BoundsSystem extends IteratingSystem {
 
         if (futureZ - halfDepth < worldMinZ) {
             position.value.z = worldMinZ + halfDepth;
-            if (velocity.value.z < 0 && Math.abs(velocity.value.z) > minBounceVelocity) {
+            if (velocity.value.z < 0) {
                 velocity.value.z = -velocity.value.z * wallBounceFactor;
                 logger.debug("Entity {} hit back wall, new Z velocity: {}", entityId, velocity.value.z);
-            } else {
-                velocity.value.z = 0;
             }
         } else if (futureZ + halfDepth > worldMaxZ) {
             position.value.z = worldMaxZ - halfDepth;
-            if (velocity.value.z > 0 && Math.abs(velocity.value.z) > minBounceVelocity) {
+            if (velocity.value.z > 0) {
                 velocity.value.z = -velocity.value.z * wallBounceFactor;
                 logger.debug("Entity {} hit front wall, new Z velocity: {}", entityId, velocity.value.z);
-            } else {
-                velocity.value.z = 0;
             }
         } else {
             position.value.z = futureZ;
@@ -114,7 +106,7 @@ public class BoundsSystem extends IteratingSystem {
         if (enforceVerticalBounds) {
             if (futureY + objectHeight > worldMaxY) {
                 position.value.y = worldMaxY - objectHeight;
-                if (velocity.value.y > 0 && Math.abs(velocity.value.y) > minBounceVelocity && canBounce) {
+                if (velocity.value.y > 0 && canBounce) {
                     float bounceVelocity = -velocity.value.y * ceilingBounceFactor;
                     velocity.value.y = bounceVelocity;
                     BounceState bounce = getOrCreateBounceState(entityId);
@@ -127,35 +119,22 @@ public class BoundsSystem extends IteratingSystem {
                         }
                     }
 
-                    logger.info("Entity {} hit ceiling at y={}, bounce velocity: {}",
+                    logger.debug("Entity {} hit ceiling at y={}, bounce velocity: {}",
                             entityId, worldMaxY, bounceVelocity);
-                } else {
-                    velocity.value.y = 0;
-                    if (mJump.has(entityId)) {
-                        Jump jump = mJump.get(entityId);
-                        if (jump.isJumping) {
-                            jump.verticalVelocity = 0;
-                            jump.isJumping = false;
-                        }
-                    }
                 }
-            }
-            else if (futureY < worldMinY) {
+            } else if (futureY < worldMinY) {
                 position.value.y = worldMinY;
-                if (velocity.value.y < 0 && Math.abs(velocity.value.y) > minBounceVelocity && canBounce) {
+                if (velocity.value.y < 0 && canBounce) {
                     float bounceVelocity = -velocity.value.y * floorBounceFactor;
                     velocity.value.y = bounceVelocity;
 
                     BounceState bounce = getOrCreateBounceState(entityId);
                     bounce.setBounced(currentTime);
 
-                    logger.info("Entity {} hit floor at y={}, bounce velocity: {}",
+                    logger.debug("Entity {} hit floor at y={}, bounce velocity: {}",
                             entityId, worldMinY, bounceVelocity);
-                } else {
-                    velocity.value.y = 0;
                 }
-            }
-            else {
+            } else {
                 position.value.y = futureY;
             }
         } else {

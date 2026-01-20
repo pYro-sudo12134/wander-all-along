@@ -6,6 +6,7 @@
     "weight": 2.5,
     "value": 1,
     "max_stack_size": 64,
+    "texturePath" : "textures/i_am_crying.g3db",
     "properties": {
       "hardness": 0.7,
       "material": "stone",
@@ -19,6 +20,7 @@
     "weight": 5.0,
     "value": 3,
     "max_stack_size": 32,
+    "texturePath" : "textures/i_am_crying.g3db",
     "properties": {
       "wood_type": "oak",
       "flammable": true,
@@ -32,6 +34,7 @@
     "weight": 0.3,
     "value": 2,
     "max_stack_size": 16,
+    "texturePath" : "textures/i_am_crying.g3db",
     "properties": {
       "nutrition": 20,
       "hydration": 5,
@@ -45,6 +48,7 @@
     "weight": 1.0,
     "value": 5,
     "max_stack_size": 8,
+    "texturePath" : "textures/i_am_crying.g3db",
     "properties": {
       "tool_type": "light_source",
       "durability": 100,
@@ -59,6 +63,7 @@
     "weight": 0.5,
     "value": 20,
     "max_stack_size": 4,
+    "texturePath" : "textures/i_am_crying.g3db",
     "properties": {
       "effect": "heal",
       "power": 50

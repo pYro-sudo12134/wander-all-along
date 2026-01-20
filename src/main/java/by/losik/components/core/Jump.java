@@ -3,7 +3,7 @@ package by.losik.components.core;
 import com.artemis.Component;
 
 public class Jump extends Component {
-    public float jumpForce = 10.0f;
+    public float jumpForce = 7.5f;
     public boolean isJumping = true;
     public float verticalVelocity = 0;
 

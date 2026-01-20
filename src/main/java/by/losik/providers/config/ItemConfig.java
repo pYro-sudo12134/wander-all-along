@@ -17,6 +17,7 @@ public class ItemConfig extends BaseConfig<ItemConfig.ItemTemplate, String> {
         public final ItemType type;
         public final float weight;
         public final float value;
+        public final String texturePath;
         public final int maxStackSize;
         public final Map<String, Object> properties;
 
@@ -28,6 +29,7 @@ public class ItemConfig extends BaseConfig<ItemConfig.ItemTemplate, String> {
                 @JsonProperty("weight") float weight,
                 @JsonProperty("value") float value,
                 @JsonProperty("max_stack_size") int maxStackSize,
+                @JsonProperty("texture") String texturePath,
                 @JsonProperty("properties") Map<String, Object> properties
         ) {
             this.itemId = itemId;
@@ -35,6 +37,7 @@ public class ItemConfig extends BaseConfig<ItemConfig.ItemTemplate, String> {
             this.type = ItemType.valueOf(type.toUpperCase());
             this.weight = weight;
             this.value = value;
+            this.texturePath = texturePath;
             this.maxStackSize = maxStackSize;
             this.properties = properties != null ? properties : Map.of();
         }
@@ -63,22 +66,26 @@ public class ItemConfig extends BaseConfig<ItemConfig.ItemTemplate, String> {
     @Override
     protected void initializeDefaultTemplates() {
         templates.put("stone", new ItemTemplate(
-                "stone", "Stone", "RESOURCE", 2.5f, 1f, 64,
+                "stone", "Stone", "RESOURCE", 2.5f, 1f,
+                64, "textures/i_am_crying.g3db",
                 Map.of("hardness", 0.7f, "material", "stone")
         ));
 
         templates.put("wood_log", new ItemTemplate(
-                "wood_log", "Wood Log", "RESOURCE", 5.0f, 3f, 32,
+                "wood_log", "Wood Log", "RESOURCE", 5.0f, 3f,
+                32, "textures/i_am_crying.g3db",
                 Map.of("wood_type", "oak", "flammable", true)
         ));
 
         templates.put("apple", new ItemTemplate(
-                "apple", "Apple", "FOOD", 0.3f, 2f, 16,
+                "apple", "Apple", "FOOD", 0.3f, 2f,
+                16, "textures/i_am_crying.g3db",
                 Map.of("nutrition", 20f, "hydration", 5f, "spoil_time", 24f)
         ));
 
         templates.put("torch", new ItemTemplate(
-                "torch", "Torch", "TOOL", 1.0f, 5f, 8,
+                "torch", "Torch", "TOOL", 1.0f, 5f,
+                8, "textures/i_am_crying.g3db",
                 Map.of("light_radius", 10f, "burn_time", 3600f)
         ));
 

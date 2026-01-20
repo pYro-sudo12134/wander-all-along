@@ -30,6 +30,7 @@ public class PlayerInputSystem extends IteratingSystem {
     protected ComponentMapper<Jump> mJump;
     protected ComponentMapper<Rotation> mRotation;
     private CameraSystem cameraSystem;
+    private MovementSystem movementSystem;
 
     private float movementSpeed = 10.0f;
     private boolean spaceKeyWasPressed = false;
@@ -37,6 +38,7 @@ public class PlayerInputSystem extends IteratingSystem {
     @Override
     protected void initialize() {
         cameraSystem = world.getSystem(CameraSystem.class);
+        movementSystem = world.getSystem(MovementSystem.class);
     }
 
     @Override
@@ -47,17 +49,14 @@ public class PlayerInputSystem extends IteratingSystem {
         if (creature.type == CreatureType.PLAYER) {
             InventorySystem inventorySystem = world.getSystem(InventorySystem.class);
             if (inventorySystem != null && inventorySystem.isInventoryOpen(entityId)) {
-                Velocity velocity = mVelocity.get(entityId);
-                velocity.value.x = 0;
-                velocity.value.z = 0;
+                if (movementSystem != null) {
+                    movementSystem.setTargetVelocity(entityId, 0, 0);
+                    movementSystem.stop(entityId);
+                }
                 return;
             }
 
             Velocity velocity = mVelocity.get(entityId);
-
-            velocity.value.x = 0;
-            velocity.value.z = 0;
-
             float cameraAngle = cameraSystem.getCurrentCameraAngle();
             float cameraAngleRad = (float) Math.toRadians(cameraAngle);
 
@@ -94,8 +93,13 @@ public class PlayerInputSystem extends IteratingSystem {
 
             if (moveDirection.len() > 0.01f) {
                 moveDirection.nor().scl(movementSpeed);
-                velocity.value.x = moveDirection.x;
-                velocity.value.z = moveDirection.z;
+
+                if (movementSystem != null) {
+                    movementSystem.setTargetVelocity(entityId, moveDirection.x, moveDirection.z);
+                } else {
+                    velocity.value.x = moveDirection.x;
+                    velocity.value.z = moveDirection.z;
+                }
 
                 if (moveDirection.len() > 0.1f) {
                     float moveX = -moveDirection.x;
@@ -112,6 +116,13 @@ public class PlayerInputSystem extends IteratingSystem {
                             moveDirection.x, moveDirection.z,
                             moveX, moveZ,
                             Math.toDegrees(targetRotation));
+                }
+            } else {
+                if (movementSystem != null) {
+                    movementSystem.setTargetVelocity(entityId, 0, 0);
+                } else {
+                    velocity.value.x = 0;
+                    velocity.value.z = 0;
                 }
             }
 
@@ -158,6 +169,16 @@ public class PlayerInputSystem extends IteratingSystem {
                 }
             } else {
                 movementSpeed = 10.0f;
+            }
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+                float horizontalSpeed = (float) Math.sqrt(
+                        velocity.value.x * velocity.value.x + velocity.value.z * velocity.value.z
+                );
+                logger.info("Player velocity: x={}, z={}, speed={}",
+                        String.format("%.2f", velocity.value.x),
+                        String.format("%.2f", velocity.value.z),
+                        String.format("%.2f", horizontalSpeed));
             }
         }
     }

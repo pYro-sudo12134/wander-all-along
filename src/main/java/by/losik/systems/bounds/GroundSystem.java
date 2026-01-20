@@ -90,7 +90,6 @@ public class GroundSystem extends IteratingSystem {
 
     @Override
     protected void begin() {
-
         initResources();
     }
 

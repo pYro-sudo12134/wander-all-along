@@ -25,6 +25,7 @@ import by.losik.providers.flyweight.TextureFlyweight;
 import by.losik.systems.bounds.BoundsSystem;
 import by.losik.systems.camera.CameraSystem;
 import by.losik.systems.camera.FollowTargetSystem;
+import by.losik.systems.collisions.CollisionSystem;
 import by.losik.systems.movement.GravitySystem;
 import by.losik.systems.bounds.GroundSystem;
 import by.losik.systems.inventory.InventorySystem;
@@ -78,7 +79,7 @@ public class CompositionRoot extends AbstractModule {
         bind(GravitySystem.class).in(Singleton.class);
         bind(InventorySystem.class).in(Singleton.class);
         bind(TimeSystem.class).in(Singleton.class);
-
+        bind(CollisionSystem.class).in(Singleton.class);
     }
 
     @Provides
@@ -93,7 +94,8 @@ public class CompositionRoot extends AbstractModule {
             FollowTargetSystem followTargetSystem,
             GravitySystem gravitySystem,
             InventorySystem inventorySystem,
-            TimeSystem timeSystem) {
+            TimeSystem timeSystem,
+            CollisionSystem collisionSystem) {
 
         WorldConfigurationBuilder config = new WorldConfigurationBuilder();
         config.with(timeSystem)
@@ -101,6 +103,7 @@ public class CompositionRoot extends AbstractModule {
                 .with(movementSystem)
                 .with(gravitySystem)
                 .with(boundsSystem)
+                .with(collisionSystem)
                 .with(followTargetSystem)
                 .with(cameraSystem)
                 .with(isometricRenderSystem)

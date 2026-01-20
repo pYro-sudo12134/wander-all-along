@@ -7,9 +7,8 @@ import by.losik.providers.factories.CreatureFactory;
 import by.losik.systems.bounds.BoundsSystem;
 import by.losik.systems.camera.CameraSystem;
 import by.losik.systems.inventory.InventorySystem;
-import by.losik.systems.render.IsometricModelRenderSystem;
-import by.losik.systems.movement.MovementSystem;
 import by.losik.systems.movement.PlayerInputSystem;
+import by.losik.systems.render.IsometricModelRenderSystem;
 import by.losik.ui.MainGameScreen;
 import com.artemis.World;
 import com.badlogic.gdx.ApplicationAdapter;
@@ -27,15 +26,11 @@ public class GameBootstrap extends ApplicationAdapter {
     private final World world;
     private final CreatureFactory creatureFactory;
     private MainGameScreen mainGameScreen;
-    private MovementSystem movementSystem;
-    private PlayerInputSystem playerInputSystem;
-    private BoundsSystem boundsSystem;
     private CameraSystem cameraSystem;
     private IsometricModelRenderSystem renderSystem;
     private InventorySystem inventorySystem;
     private boolean initialized = false;
     private boolean paused = false;
-    private int playerEntityId = -1;
 
     @Inject
     public GameBootstrap(World world, CreatureFactory creatureFactory) {
@@ -68,9 +63,8 @@ public class GameBootstrap extends ApplicationAdapter {
     }
 
     private void injectSystems() {
-        movementSystem = world.getSystem(MovementSystem.class);
-        playerInputSystem = world.getSystem(PlayerInputSystem.class);
-        boundsSystem = world.getSystem(BoundsSystem.class);
+        PlayerInputSystem playerInputSystem = world.getSystem(PlayerInputSystem.class);
+        BoundsSystem boundsSystem = world.getSystem(BoundsSystem.class);
         cameraSystem = world.getSystem(CameraSystem.class);
         renderSystem = world.getSystem(IsometricModelRenderSystem.class);
         inventorySystem = world.getSystem(InventorySystem.class);
@@ -88,11 +82,11 @@ public class GameBootstrap extends ApplicationAdapter {
     private void createInitialEntities() {
         logger.info("Creating initial entities...");
 
-        playerEntityId = creatureFactory.createPlayer("bat sipson", 0, 0);
+        int playerEntityId = creatureFactory.createPlayer("bat sipson", 0, 0);
         logger.info("Player created with entity ID: {}", playerEntityId);
 
         createCameraForPlayer(playerEntityId);
-        //createDemoNPCs();
+        createDemoNPCs();
         createTestObjects();
         logger.info("Created initial entities");
     }
@@ -139,18 +133,18 @@ public class GameBootstrap extends ApplicationAdapter {
         }
     }
 
-//    private void createDemoNPCs() {
-//        String[] npcNames = {"Guard", "Merchant", "Farmer", "Hunter"};
-//
-//        for (int i = 0; i < npcNames.length; i++) {
-//            float x = (i - 2) * 5;
-//            float y = -5;
-//
-//            int npcId = creatureFactory.createNPC(npcNames[i], x, y);
-//            logger.info("Created NPC '{}' at ({}, {}) with entity ID: {}",
-//                    npcNames[i], x, y, npcId);
-//        }
-//    }
+    private void createDemoNPCs() {
+        String[] npcNames = {"Guard", "Merchant", "Farmer", "Hunter"};
+
+        for (int i = 0; i < npcNames.length; i++) {
+            float x = (i - 2) * 5;
+            float y = -5;
+
+            int npcId = creatureFactory.createNPC(npcNames[i], x, y);
+            logger.info("Created NPC '{}' at ({}, {}) with entity ID: {}",
+                    npcNames[i], x, y, npcId);
+        }
+    }
 
     private void createTestObjects() {
         logger.info("Test objects would be created here");
@@ -258,29 +252,4 @@ public class GameBootstrap extends ApplicationAdapter {
     public boolean isPaused() {
         return paused;
     }
-
-    public int getPlayerEntityId() {
-        return playerEntityId;
-    }
-
-    public MovementSystem getMovementSystem() {
-        return movementSystem;
-    }
-
-    public PlayerInputSystem getPlayerInputSystem() {
-        return playerInputSystem;
-    }
-
-    public BoundsSystem getBoundsSystem() {
-        return boundsSystem;
-    }
-
-    public CameraSystem getCameraSystem() {
-        return cameraSystem;
-    }
-
-    public IsometricModelRenderSystem getRenderSystem() {
-        return renderSystem;
-    }
-
 }

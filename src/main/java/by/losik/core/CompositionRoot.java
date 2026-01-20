@@ -31,6 +31,7 @@ import by.losik.systems.inventory.InventorySystem;
 import by.losik.systems.render.IsometricModelRenderSystem;
 import by.losik.systems.movement.MovementSystem;
 import by.losik.systems.movement.PlayerInputSystem;
+import by.losik.systems.time.TimeSystem;
 import com.artemis.World;
 import com.artemis.WorldConfigurationBuilder;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -76,6 +77,7 @@ public class CompositionRoot extends AbstractModule {
         bind(FollowTargetSystem.class).in(Singleton.class);
         bind(GravitySystem.class).in(Singleton.class);
         bind(InventorySystem.class).in(Singleton.class);
+        bind(TimeSystem.class).in(Singleton.class);
 
     }
 
@@ -90,17 +92,19 @@ public class CompositionRoot extends AbstractModule {
             GroundSystem groundSystem,
             FollowTargetSystem followTargetSystem,
             GravitySystem gravitySystem,
-            InventorySystem inventorySystem) {
+            InventorySystem inventorySystem,
+            TimeSystem timeSystem) {
 
         WorldConfigurationBuilder config = new WorldConfigurationBuilder();
-        config.with(playerInputSystem)
+        config.with(timeSystem)
+                .with(playerInputSystem)
                 .with(movementSystem)
-                .with(followTargetSystem)
+                .with(gravitySystem)
                 .with(boundsSystem)
+                .with(followTargetSystem)
                 .with(cameraSystem)
                 .with(isometricRenderSystem)
                 .with(groundSystem)
-                .with(gravitySystem)
                 .with(inventorySystem);
 
         // .with(new CombatSystem())
@@ -108,7 +112,6 @@ public class CompositionRoot extends AbstractModule {
         // .with(new NeedsSystem())
         // .with(new InventorySystem())
         // .with(new TimeSystem())
-        // .with(new UIRenderSystem());
 
         return new World(config.build());
     }

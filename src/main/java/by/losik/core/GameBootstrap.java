@@ -80,7 +80,7 @@ public class GameBootstrap extends ApplicationAdapter {
         }
 
         if (boundsSystem != null) {
-            boundsSystem.setAllBounds(-50, 50, -10, 100, -50, 50);
+            boundsSystem.setAllBounds(-50, 50, -10, 20, -50, 50);
             boundsSystem.setEnforceWorldBounds(true);
         }
     }
@@ -88,11 +88,11 @@ public class GameBootstrap extends ApplicationAdapter {
     private void createInitialEntities() {
         logger.info("Creating initial entities...");
 
-        playerEntityId = creatureFactory.createPlayer("Hero", 0, 0);
+        playerEntityId = creatureFactory.createPlayer("bat sipson", 0, 0);
         logger.info("Player created with entity ID: {}", playerEntityId);
 
         createCameraForPlayer(playerEntityId);
-        createDemoNPCs();
+        //createDemoNPCs();
         createTestObjects();
         logger.info("Created initial entities");
     }
@@ -139,18 +139,18 @@ public class GameBootstrap extends ApplicationAdapter {
         }
     }
 
-    private void createDemoNPCs() {
-        String[] npcNames = {"Guard", "Merchant", "Farmer", "Hunter"};
-
-        for (int i = 0; i < npcNames.length; i++) {
-            float x = (i - 2) * 5;
-            float y = -5;
-
-            int npcId = creatureFactory.createNPC(npcNames[i], x, y);
-            logger.info("Created NPC '{}' at ({}, {}) with entity ID: {}",
-                    npcNames[i], x, y, npcId);
-        }
-    }
+//    private void createDemoNPCs() {
+//        String[] npcNames = {"Guard", "Merchant", "Farmer", "Hunter"};
+//
+//        for (int i = 0; i < npcNames.length; i++) {
+//            float x = (i - 2) * 5;
+//            float y = -5;
+//
+//            int npcId = creatureFactory.createNPC(npcNames[i], x, y);
+//            logger.info("Created NPC '{}' at ({}, {}) with entity ID: {}",
+//                    npcNames[i], x, y, npcId);
+//        }
+//    }
 
     private void createTestObjects() {
         logger.info("Test objects would be created here");

@@ -24,13 +24,11 @@ public class MovementSystem extends IteratingSystem {
     protected void begin() {
         deltaTime = world.getDelta();
     }
-
     @Override
     protected void process(int entityId) {
         Position position = mPosition.get(entityId);
         Velocity velocity = mVelocity.get(entityId);
         position.value.x += velocity.value.x * deltaTime;
-        position.value.y += velocity.value.y * deltaTime;
         position.value.z += velocity.value.z * deltaTime;
 
         updateRotation(entityId);

@@ -28,7 +28,7 @@ public class CameraSystem extends IteratingSystem {
     private boolean cameraInitialized = false;
     private boolean leftKeyWasPressed = false;
     private boolean rightKeyWasPressed = false;
-    private final float originalFOV = 60f;
+    private final float originalFOV = 45f;
 
     @Override
     protected void initialize() {

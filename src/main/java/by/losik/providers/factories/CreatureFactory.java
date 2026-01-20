@@ -2,6 +2,7 @@ package by.losik.providers.factories;
 
 import by.losik.components.combat.Equipment;
 import by.losik.components.combat.Resistances;
+import by.losik.components.core.BounceState;
 import by.losik.components.core.Bounds;
 import by.losik.components.core.CarryingCapacity;
 import by.losik.components.core.Creature;
@@ -56,6 +57,7 @@ public class CreatureFactory extends EntityFactory {
                 .add(new Gravity())
                 .add(new Jump())
                 .add(new Rotation())
+                .add(new BounceState())
                 .add(new Tag(creatureType.getCreatureType()))
                 .add(new Description("A " + creatureType.getCreatureType() + " named " + name));
 

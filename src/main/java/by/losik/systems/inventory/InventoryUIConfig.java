@@ -28,8 +28,8 @@ public final class InventoryUIConfig {
     public static final Color TEXT_CONTROLS_COLOR = Color.LIGHT_GRAY;
     public static final Color TEXT_CONTROLS_HIGHLIGHT_COLOR = Color.YELLOW;
 
-    public static final float FONT_TITLE_SCALE = 1.5f;
-    public static final float FONT_HEADER_SCALE = 1.2f;
+    public static final float FONT_TITLE_SCALE = 1.1f;
+    public static final float FONT_HEADER_SCALE = 1.1f;
     public static final float FONT_NORMAL_SCALE = 1.0f;
     public static final float FONT_SMALL_SCALE = 1.0f;
     public static final float FONT_CONTROLS_SCALE = 1.0f;

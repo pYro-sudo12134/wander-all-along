@@ -115,6 +115,7 @@ public class MainGameScreen implements Screen {
     @Override
     public void hide() {
         logger.info("Main game screen hidden");
+        gameBootstrap.pause();
     }
 
     @Override

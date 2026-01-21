@@ -1,6 +1,6 @@
 package by.losik.core;
 
-import by.losik.components.audio.MusicPlayer;
+import by.losik.components.audio.AudioPlayer;
 import by.losik.components.core.Camera;
 import by.losik.components.core.FollowTarget;
 import by.losik.components.core.Position;
@@ -151,7 +151,7 @@ public class GameBootstrap extends ApplicationAdapter {
 
         int musicEntity = world.create();
         world.edit(musicEntity)
-                .add(new MusicPlayer(
+                .add(new AudioPlayer(
                         "music/1-20_-dog.mp3",
                         "music/2-23_-stal.mp3"
                 ));
@@ -222,12 +222,21 @@ public class GameBootstrap extends ApplicationAdapter {
     public void pause() {
         logger.info("Game paused");
         paused = true;
+
+        MusicSystem musicSystem = world.getSystem(MusicSystem.class);
+        if (musicSystem != null) {
+            musicSystem.pause();
+        }
     }
 
     public void resume() {
         logger.info("Game resumed");
         paused = false;
 
+        MusicSystem musicSystem = world.getSystem(MusicSystem.class);
+        if (musicSystem != null && musicSystem.isMusicEnabled()) {
+            musicSystem.resume();
+        }
     }
 
     public void dispose() {

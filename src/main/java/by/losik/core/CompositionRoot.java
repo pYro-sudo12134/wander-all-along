@@ -30,6 +30,8 @@ import by.losik.systems.collisions.SmoothPhysicsSystem;
 import by.losik.systems.movement.GravitySystem;
 import by.losik.systems.bounds.GroundSystem;
 import by.losik.systems.inventory.InventorySystem;
+import by.losik.systems.music.MusicControlSystem;
+import by.losik.systems.music.MusicSystem;
 import by.losik.systems.render.IsometricModelRenderSystem;
 import by.losik.systems.movement.MovementSystem;
 import by.losik.systems.movement.PlayerInputSystem;
@@ -82,6 +84,8 @@ public class CompositionRoot extends AbstractModule {
         bind(TimeSystem.class).in(Singleton.class);
         bind(CollisionSystem.class).in(Singleton.class);
         bind(SmoothPhysicsSystem.class).in(Singleton.class);
+        bind(MusicSystem.class).in(Singleton.class);
+        bind(MusicControlSystem.class).in(Singleton.class);
     }
 
     @Provides
@@ -98,7 +102,9 @@ public class CompositionRoot extends AbstractModule {
             InventorySystem inventorySystem,
             TimeSystem timeSystem,
             CollisionSystem collisionSystem,
-            SmoothPhysicsSystem smoothPhysicsSystem) {
+            SmoothPhysicsSystem smoothPhysicsSystem,
+            MusicSystem musicSystem,
+            MusicControlSystem musicControlSystem) {
 
         WorldConfigurationBuilder config = new WorldConfigurationBuilder();
         config.with(timeSystem)
@@ -112,7 +118,9 @@ public class CompositionRoot extends AbstractModule {
                 .with(cameraSystem)
                 .with(isometricRenderSystem)
                 .with(groundSystem)
-                .with(inventorySystem);
+                .with(inventorySystem)
+                .with(musicSystem)
+                .with(musicControlSystem);
 
         // .with(new CombatSystem())
         // .with(new HealthSystem())

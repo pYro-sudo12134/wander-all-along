@@ -27,18 +27,14 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class IsometricModelRenderSystem extends IteratingSystem {
     private static final Logger logger = LoggerFactory.getLogger(IsometricModelRenderSystem.class);
-
     protected ComponentMapper<Position> mPosition;
     protected ComponentMapper<Model3D> mModel3D;
     protected ComponentMapper<Creature> mCreature;
-
     private ModelBatch modelBatch;
     private Environment environment;
     private boolean initialized = false;
-
     private final ObjectMap<String, com.badlogic.gdx.graphics.g3d.Model> modelCache = new ObjectMap<>();
     private final ObjectMap<Integer, ModelInstance> instanceCache = new ObjectMap<>();
-
     private CameraSystem cameraSystem;
     private GroundSystem groundSystem;
 

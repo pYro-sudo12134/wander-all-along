@@ -43,7 +43,7 @@ public class CameraSystem extends IteratingSystem {
 
         try {
             logger.info("Attempting to create PerspectiveCamera...");
-            perspectiveCamera = new PerspectiveCamera(45, 800, 600);
+            perspectiveCamera = new PerspectiveCamera(60, 800, 600);
             setupIsometricProjection();
             cameraInitialized = true;
 
@@ -169,7 +169,7 @@ public class CameraSystem extends IteratingSystem {
         float offsetX = horizontalDistance * (float) Math.sin(radXZ);
         float offsetY = camera.cameraHeight;
         float offsetZ = horizontalDistance * (float) Math.cos(radXZ);
-        float alpha = Math.min(2.0f * world.getDelta() * 60f, 1f);
+        float alpha = Math.min(2.0f * world.getDelta() * 30f, 0.5f);
 
         Vector3 desiredPosition = new Vector3(
                 follow.targetX + offsetX,

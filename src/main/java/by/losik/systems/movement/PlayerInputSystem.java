@@ -4,9 +4,9 @@ import by.losik.components.core.Creature;
 import by.losik.components.core.CreatureType;
 import by.losik.components.core.Gravity;
 import by.losik.components.core.Jump;
-import by.losik.components.core.Velocity;
 import by.losik.components.core.Position;
 import by.losik.components.core.Rotation;
+import by.losik.components.core.Velocity;
 import by.losik.systems.camera.CameraSystem;
 import by.losik.systems.inventory.InventorySystem;
 import com.artemis.ComponentMapper;
@@ -16,6 +16,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector3;
 import com.google.inject.Singleton;
+import it.unimi.dsi.fastutil.ints.Int2BooleanArrayMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +32,7 @@ public class PlayerInputSystem extends IteratingSystem {
     protected ComponentMapper<Rotation> mRotation;
     private CameraSystem cameraSystem;
     private MovementSystem movementSystem;
-
-    private float movementSpeed = 10.0f;
-    private boolean spaceKeyWasPressed = false;
+    private final Int2BooleanArrayMap spaceKeyStateMap = new Int2BooleanArrayMap();
 
     @Override
     protected void initialize() {
@@ -92,7 +91,7 @@ public class PlayerInputSystem extends IteratingSystem {
             }
 
             if (moveDirection.len() > 0.01f) {
-                moveDirection.nor().scl(movementSpeed * 0.75f); //just for now to have a lower speed
+                moveDirection.nor().scl(velocity.movementSpeed * 0.75f); //just for now to have a lower speed
 
                 if (movementSystem != null) {
                     movementSystem.setTargetVelocity(entityId, moveDirection.x, moveDirection.z);
@@ -127,8 +126,9 @@ public class PlayerInputSystem extends IteratingSystem {
             }
 
             boolean spacePressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
+            boolean wasPressed = spaceKeyStateMap.getOrDefault(entityId, false);
 
-            if (spacePressed && !spaceKeyWasPressed) {
+            if (spacePressed && !wasPressed) {
                 boolean hasGravity = mGravity.has(entityId);
                 boolean hasJump = mJump.has(entityId);
 
@@ -154,21 +154,21 @@ public class PlayerInputSystem extends IteratingSystem {
                 }
             }
 
-            spaceKeyWasPressed = spacePressed;
+            spaceKeyStateMap.put(entityId, spacePressed);
 
             if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
                     Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
                 if (mGravity.has(entityId)) {
                     Gravity gravity = mGravity.get(entityId);
                     if (gravity.isGrounded) {
-                        movementSpeed = velocity.crouchSpeed;
-                        logger.debug("Player crouching, speed: {}", movementSpeed);
+                        velocity.movementSpeed = velocity.crouchSpeed;
+                        logger.debug("Player crouching, speed: {}", velocity.movementSpeed);
                     }
                 } else {
                     velocity.value.y = -velocity.crouchSpeed;
                 }
             } else {
-                movementSpeed = 10.0f;
+                velocity.movementSpeed = 10.0f;
             }
 
             if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
@@ -195,7 +195,9 @@ public class PlayerInputSystem extends IteratingSystem {
         }
     }
 
-    public void setMovementSpeed(float speed) {
-        this.movementSpeed = speed;
+    @Override
+    protected void removed(int entityId) {
+        // Очищаем состояние при удалении сущности
+        spaceKeyStateMap.remove(entityId);
     }
 }

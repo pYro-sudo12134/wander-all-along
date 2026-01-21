@@ -13,7 +13,7 @@ public class Camera extends Component {
     public float targetAngleXZ = 45f;
     public float rotationSpeed = 90f;
     public boolean isRotating = false;
-    public float cameraHeight = 15f;
+    public float cameraHeight = 20f;
     public float cameraDistance = 20f;
     public float verticalAngle = 30f;
     public static final float[] CAMERA_ANGLES = {45f, 135f, 225f, 315f};
@@ -33,13 +33,5 @@ public class Camera extends Component {
         currentAngleIndex = (currentAngleIndex - 1 + CAMERA_ANGLES.length) % CAMERA_ANGLES.length;
         targetAngleXZ = CAMERA_ANGLES[currentAngleIndex];
         isRotating = true;
-    }
-
-    public void setAngleIndex(int index) {
-        if (index >= 0 && index < CAMERA_ANGLES.length) {
-            currentAngleIndex = index;
-            targetAngleXZ = CAMERA_ANGLES[index];
-            isRotating = true;
-        }
     }
 }

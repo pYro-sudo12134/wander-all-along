@@ -1,5 +1,6 @@
 package by.losik.core;
 
+import by.losik.components.audio.MusicPlayer;
 import by.losik.components.core.Camera;
 import by.losik.components.core.FollowTarget;
 import by.losik.components.core.Position;
@@ -7,7 +8,7 @@ import by.losik.providers.factories.CreatureFactory;
 import by.losik.systems.bounds.BoundsSystem;
 import by.losik.systems.camera.CameraSystem;
 import by.losik.systems.inventory.InventorySystem;
-import by.losik.systems.movement.PlayerInputSystem;
+import by.losik.systems.music.MusicSystem;
 import by.losik.systems.render.IsometricModelRenderSystem;
 import by.losik.ui.MainGameScreen;
 import com.artemis.World;
@@ -63,15 +64,10 @@ public class GameBootstrap extends ApplicationAdapter {
     }
 
     private void injectSystems() {
-        PlayerInputSystem playerInputSystem = world.getSystem(PlayerInputSystem.class);
         BoundsSystem boundsSystem = world.getSystem(BoundsSystem.class);
         cameraSystem = world.getSystem(CameraSystem.class);
         renderSystem = world.getSystem(IsometricModelRenderSystem.class);
         inventorySystem = world.getSystem(InventorySystem.class);
-
-        if (playerInputSystem != null) {
-            playerInputSystem.setMovementSpeed(5.0f);
-        }
 
         if (boundsSystem != null) {
             boundsSystem.setAllBounds(-50, 50, -10, 20, -50, 50);
@@ -153,6 +149,17 @@ public class GameBootstrap extends ApplicationAdapter {
     private void setupSystems() {
         logger.info("Setting up systems...");
 
+        int musicEntity = world.create();
+        world.edit(musicEntity)
+                .add(new MusicPlayer(
+                        "music/1-20_-dog.mp3",
+                        "music/2-23_-stal.mp3"
+                ));
+        MusicSystem musicSystem = world.getSystem(MusicSystem.class);
+
+        musicSystem.setMasterVolume(0.3f);
+        musicSystem.setEnabled(true);
+
         if (cameraSystem != null) {
             logger.info("CameraSystem found and ready");
 
@@ -220,6 +227,7 @@ public class GameBootstrap extends ApplicationAdapter {
     public void resume() {
         logger.info("Game resumed");
         paused = false;
+
     }
 
     public void dispose() {
